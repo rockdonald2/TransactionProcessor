@@ -1,0 +1,4 @@
+include 'hszpm-client'
+include 'hszpm-server'
+include 'hszpm-commons'
+
