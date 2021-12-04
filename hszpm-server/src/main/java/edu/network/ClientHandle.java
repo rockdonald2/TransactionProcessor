@@ -1,7 +1,7 @@
 package edu.network;
 
 import edu.cnp.CnpParts;
-import edu.pay.PayMetricsProcessor;
+import edu.pay.processor.PayProcessor;
 import edu.utils.Logger;
 
 import java.io.*;
@@ -53,7 +53,8 @@ public class ClientHandle extends Thread {
 
 		Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers = null;
 		try {
-			mapOfCustomers = PayMetricsProcessor.getProcessor().process(paymentsInputStream, paymentsOutputStream);
+			mapOfCustomers = null; //PayProcessor.getProcessor().process(paymentsInputStream, paymentsOutputStream);
+			throw new IOException();
 		} catch (IOException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while processing payments");
 

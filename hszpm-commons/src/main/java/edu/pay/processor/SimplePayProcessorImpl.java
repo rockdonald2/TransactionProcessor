@@ -1,4 +1,4 @@
-package edu.pay;
+package edu.pay.processor;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -9,15 +9,20 @@ import edu.cnp.CnpValidator;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
-import edu.pay.exception.MissingDataException;
-import edu.pay.exception.NegativePaymentException;
-import edu.pay.exception.PayException;
+import edu.pay.error.PayError;
+import edu.pay.exception.general.MetricsException;
+import edu.pay.metrics.MetricsOutput;
+import edu.pay.metrics.PayMetricsFactory;
+import edu.pay.metrics.SimplePayMetrics;
+import edu.pay.utils.PayUtils;
+import edu.pay.exception.pay.MissingDataException;
+import edu.pay.exception.pay.NegativePaymentException;
+import edu.pay.exception.pay.PayException;
 import edu.cnp.exception.CnpException;
 import edu.cnp.CnpParts;
 import edu.utils.Logger;
 
-
-class PayMetricsProcessorImpl implements PayMetricsProcessor {
+class SimplePayProcessorImpl implements PayProcessor {
 
 	private final Set<PayError> errors = new HashSet<>();
 
@@ -27,27 +32,33 @@ class PayMetricsProcessorImpl implements PayMetricsProcessor {
 
 		var mapOfCustomers = getCustomers(dataInput);
 
-		PayMetrics metrics;
-		if (mapOfCustomers.size() != 0) {
-			var averagePaymentAmount = getAverage(mapOfCustomers);
+		PayMetricsFactory metricsFactory = new PayMetricsFactory();
+		try {
+			SimplePayMetrics metrics = (SimplePayMetrics) metricsFactory.getMetrics("simple");
 
-			var bigPayments = getBigPaymentsNumber(mapOfCustomers);
+			if (mapOfCustomers.size() != 0) {
+				var averagePaymentAmount = getAverage(mapOfCustomers);
+				var bigPayments = getBigPaymentsNumber(mapOfCustomers);
+				var paymentsByMinors = getPaymentsByMinors(mapOfCustomers);
+				var smallPayments = getSmallPaymentsNumber(mapOfCustomers);
+				var totalAmountCapitalCity = getTotalAmountCapitalCity(mapOfCustomers);
+				var foreigners = getForeigners(mapOfCustomers);
 
-			var paymentsByMinors = getPaymentsByMinors(mapOfCustomers);
+				metrics.setAveragePaymentAmount(averagePaymentAmount);
+				metrics.setBigPayments(bigPayments);
+				metrics.setPaymentsByMinors(paymentsByMinors);
+				metrics.setSmallPayments(smallPayments);
+				metrics.setTotalAmountCapitalCity(totalAmountCapitalCity);
+				metrics.setForeigners(foreigners);
+			} else {
+				metrics.setAllMetricesNullOrEmpty();
+			}
 
-			var smallPayments = getSmallPaymentsNumber(mapOfCustomers);
-
-			var totalAmountCapitalCity = getTotalAmountCapitalCity(mapOfCustomers);
-
-			var foreigners = getForeigners(mapOfCustomers);
-
-			metrics = PayMetrics.getMetrics(foreigners, paymentsByMinors, bigPayments,
-							smallPayments, averagePaymentAmount, totalAmountCapitalCity, errors);
-		} else {
-			metrics = PayMetrics.getMetrics(0, 0, 0, 0, BigDecimal.ZERO, BigDecimal.ZERO, errors);
+			MetricsOutput.writeToFile(metrics, metricsOutputStream);
+		} catch (MetricsException e) {
+			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 		}
 
-		metrics.writeToFile(metricsOutputStream);
 		return mapOfCustomers;
 	}
 
@@ -144,7 +155,7 @@ class PayMetricsProcessorImpl implements PayMetricsProcessor {
 	}
 
 	Integer getBigPaymentsNumber(final Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers) {
-		return PayUtils.getTotalTranzactionNumber(mapOfCustomers) - getPaymentsNumberByLimit(mapOfCustomers, "5000");
+		return PayUtils.getTotalTransactionNumber(mapOfCustomers) - getPaymentsNumberByLimit(mapOfCustomers, "5000");
 	}
 
 	/**
@@ -156,7 +167,7 @@ class PayMetricsProcessorImpl implements PayMetricsProcessor {
 	 *          fizetések átlaga
 	 */
 	BigDecimal getAverage(final Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers) {
-		return PayUtils.sumTranzactions(mapOfCustomers).divide(BigDecimal.valueOf(PayUtils.getTotalTranzactionNumber(mapOfCustomers)), 2, RoundingMode.HALF_EVEN);
+		return PayUtils.sumTransactions(mapOfCustomers).divide(BigDecimal.valueOf(PayUtils.getTotalTransactionNumber(mapOfCustomers)), 2, RoundingMode.HALF_EVEN);
 	}
 
 	/**
@@ -259,7 +270,8 @@ class PayMetricsProcessorImpl implements PayMetricsProcessor {
 	 *                      hibatípus
 	 */
 	private void writeError(final int lineNumber, final int errorType) {
-		errors.add(PayError.generateError(lineNumber, errorType));
+		// TODO: unhandled runtime exception
+		errors.add(new PayError.Builder().atLine(lineNumber).withType(errorType).build());
 	}
 
 }

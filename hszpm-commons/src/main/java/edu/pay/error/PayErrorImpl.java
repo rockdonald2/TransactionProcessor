@@ -1,4 +1,4 @@
-package edu.pay;
+package edu.pay.error;
 
 import org.json.JSONObject;
 
@@ -15,27 +15,27 @@ class PayErrorImpl implements PayError {
      * @param code
      *              hiba típusa
      */
-    public PayErrorImpl(int lineNumber, int code) {
+    PayErrorImpl(int lineNumber, int code) {
         this.lineNumber = lineNumber;
         this.code = code;
     }
 
     @Override
-    public Integer line() {
+    public int getLine() {
         return lineNumber;
     }
 
     @Override
-    public Integer type() {
+    public int getType() {
         return code;
     }
 
     @Override
-    public JSONObject getJsonObject() {
+    public JSONObject generateJson() {
         var outJsonFormat = new JSONObject();
 
-        outJsonFormat.put("line", this.line());
-        outJsonFormat.put("type", this.type());
+        outJsonFormat.put("line", this.getLine());
+        outJsonFormat.put("type", this.getType());
 
         return outJsonFormat;
     }

@@ -1,4 +1,4 @@
-package edu.pay.exception;
+package edu.pay.exception.pay;
 
 public class MissingDataException extends PayException {
 

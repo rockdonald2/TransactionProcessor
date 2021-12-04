@@ -1,28 +1,28 @@
-package edu.pay.exception;
+package edu.pay.exception.pay;
 
-public abstract class PayException extends Exception {
+public abstract class PayException extends RuntimeException {
 
-    private final ErrorCode m_code;
+    private final ErrorCode code;
 
     public enum ErrorCode {
 
         INVALID_LINE("INVALID_LINE", 0),
         INVALID_PAYMENT("INVALID_PAYMENT", 2);
 
-        private final String m_errorName;
-        private final int m_typeNumber;
+        private final String errorName;
+        private final int typeNumber;
 
         ErrorCode(String errorName, int typeNumber) {
-            m_errorName = errorName;
-            m_typeNumber = typeNumber;
+            this.errorName = errorName;
+            this.typeNumber = typeNumber;
         }
 
-        String getErrorName() {
-            return m_errorName;
+        public String getErrorName() {
+            return errorName;
         }
 
-        int getErrorTypeNumber() {
-            return m_typeNumber;
+        public int getErrorTypeNumber() {
+            return typeNumber;
         }
 
     }
@@ -37,7 +37,7 @@ public abstract class PayException extends Exception {
      */
     public PayException(String errorMsg, ErrorCode code) {
         super("Error: " + errorMsg);
-        m_code = code;
+        this.code = code;
     }
 
     /**
@@ -48,7 +48,7 @@ public abstract class PayException extends Exception {
      */
     public PayException(PayException e) {
         super(e.getMessage());
-        m_code = e.getCode();
+        code = e.getCode();
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class PayException extends Exception {
      * @return ErrorCode
      */
     public ErrorCode getCode() {
-        return m_code;
+        return code;
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class PayException extends Exception {
      * @return hibakód típusszáma
      */
     public int getCodeType() {
-        return m_code.getErrorTypeNumber();
+        return code.getErrorTypeNumber();
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class PayException extends Exception {
      *
      * @return hibakód megnevezése
      */
-    public String getCodeName() { return m_code.getErrorName(); }
+    public String getCodeName() { return code.getErrorName(); }
 
 }
 

@@ -1,4 +1,4 @@
-package edu.pay;
+package edu.pay.processor;
 
 import edu.cnp.CnpParts;
 
@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 
-public interface PayMetricsProcessor {
+public interface PayProcessor {
 
     /**
      * Feldolgozza a {@code paymentsInputStream}-ban található tranzakciókat és kiírja a mutatókat a
@@ -21,13 +21,5 @@ public interface PayMetricsProcessor {
      *             ha valamilyen I/O hiba jelenne meg
      */
     Map<CnpParts, ArrayList<BigDecimal>> process(FileInputStream paymentsInputStream, FileOutputStream metricsOutputStream) throws IOException;
-
-    /**
-     * Visszatérít egy használható PayMetricsProcessor-t.
-     * @return PayMetricsProcessor
-     */
-    static PayMetricsProcessor getProcessor() {
-        return new PayMetricsProcessorImpl();
-    }
 
 }
