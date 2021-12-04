@@ -2,7 +2,7 @@ package edu.pay.error;
 
 import org.json.JSONObject;
 
-class PayErrorImpl implements PayError {
+class PayErrorImpl extends PayError {
 
     private final int lineNumber;
     private final int code;

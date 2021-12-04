@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class PayMetricsFactory {
 
-	public PayMetrics getMetrics(String type) {
+	public PayMetrics getMetrics(String type) throws UnsupportedMetricsTypeException {
 		if (Objects.isNull(type)) {
 			throw new UnsupportedMetricsTypeException();
 		}

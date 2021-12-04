@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class PayProcessorFactory {
 
-	public PayProcessor getProcessor(String type) {
+	public PayProcessor getProcessor(String type) throws UnsupportedProcessorTypeException {
 		if (Objects.isNull(type)) {
 			throw new UnsupportedProcessorTypeException();
 		}

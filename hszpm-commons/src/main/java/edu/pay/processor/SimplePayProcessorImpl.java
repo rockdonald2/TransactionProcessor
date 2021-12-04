@@ -6,7 +6,8 @@ import java.math.RoundingMode;
 import java.util.*;
 
 import edu.pay.error.PayError;
-import edu.pay.exception.general.MetricsException;
+import edu.pay.exception.general.metrics.MetricsException;
+import edu.pay.exception.general.metrics.MetricsOutputException;
 import edu.pay.metrics.MetricsOutput;
 import edu.pay.metrics.PayMetricsFactory;
 import edu.pay.metrics.SimplePayMetrics;
@@ -51,9 +52,8 @@ class SimplePayProcessorImpl implements PayProcessor {
 			}
 
 			MetricsOutput.writeToFile(metrics, metricsOutputStream);
-		} catch (MetricsException e) {
+		} catch (MetricsException | MetricsOutputException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
-			// TODO: exception
 		}
 
 		return mapOfCustomers;

@@ -87,7 +87,6 @@ public class ProcessorUtils {
 	 *                      hibatípus
 	 */
 	private static void writeError(final int lineNumber, final int errorType, Set<PayError> errors) {
-		// TODO: unhandled runtime exception
 		errors.add(new PayError.Builder().atLine(lineNumber).withType(errorType).build());
 	}
 

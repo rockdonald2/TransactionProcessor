@@ -1,5 +1,6 @@
 package edu.pay.metrics;
 
+import edu.pay.exception.general.metrics.MetricsOutputException;
 import edu.utils.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,7 +18,7 @@ public class MetricsOutput {
 	 * @param file
 	 *                              kimeneti File adatfolyama
 	 */
-	public static void writeToFile(PayMetrics metrics, FileOutputStream file) {
+	public static void writeToFile(PayMetrics metrics, FileOutputStream file) throws MetricsOutputException {
 		var output = new JSONObject();
 		var metrices = metrics.metrices();
 
@@ -38,7 +39,7 @@ public class MetricsOutput {
 			o.close();
 		} catch (IOException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
-			// TODO: exception
+			throw new MetricsOutputException();
 		}
 	}
 

@@ -60,9 +60,7 @@ public enum County implements Serializable {
 
     private static final Map<Byte, County> map = new HashMap<>();
 
-    /**
-     * Létrehoz egy Map-et, amelyen keresztül gyorsabban megy az adott megye kikeresése.
-     */
+    // Létrehoz egy Map-et, amelyen keresztül gyorsabban megy az adott megye kikeresése.
     static {
         for (final var j : County.values()) {
             map.put(j.getCode(), j);
