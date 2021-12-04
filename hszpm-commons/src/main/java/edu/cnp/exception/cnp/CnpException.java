@@ -1,6 +1,6 @@
 package edu.cnp.exception.cnp;
 
-public abstract class CnpException extends Exception {
+public abstract class CnpException extends RuntimeException {
 
     private final ErrorCode m_code;
 

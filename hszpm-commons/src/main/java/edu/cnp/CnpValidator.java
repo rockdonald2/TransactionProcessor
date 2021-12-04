@@ -39,14 +39,16 @@ public class CnpValidator {
     }
 
     public static CnpParts validate(String cnp) throws CnpException {
+        cnp = cnp.trim();
         validateLength(cnp);
         validateFormat(cnp);
-        validateControlNumber(cnp);
         var sex = getSex(cnp);
         var foreigner = getForeignStatus(cnp);
         var birthDate = getBirthDate(cnp);
         var birthCounty = getBirthCounty(cnp);
         var orderNumber = getOrderNumber(cnp);
+
+        validateControlNumber(cnp);
 
         return new CnpParts.Builder().withCnp(cnp).ofSex(sex).isForeigner(foreigner).withBirth(birthDate).withOrder(orderNumber).inCounty(birthCounty).build();
     }
@@ -74,8 +76,10 @@ public class CnpValidator {
      *                      ha a CNP érvénytelen
      */
     private static void validateLength(final String cnp) throws CnpException {
-        if (cnp.length() != CnpUtils.CNP_LENGTH) {
+        if (cnp.length() < CnpUtils.CNP_LENGTH) {
             throw new CnpFormatException("Missing digits from CNP");
+        } else if (cnp.length() > CnpUtils.CNP_LENGTH) {
+            throw new CnpFormatException("Excess digits in CNP");
         }
     }
 
