@@ -13,6 +13,8 @@ public class Server {
 
 			while (true) {
 				(new ClientHandle(ss.accept())).start();
+
+				// ! elérhető kellene legyen egy parancs, amivel lehetséges a szerver leállítása a folyamat megölése helyett
 			}
 		} catch (IOException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Error while creating ServerSocket");

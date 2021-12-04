@@ -31,11 +31,15 @@ public class Logger {
 		long currPID = ProcessHandle.current().pid();
 
 		String formattedLogFileName = "log-" + currDateFormated + "-" + currPID + ".log";
-		String fullPath = gettingSurelyExistingDrive() + File.separator + "Temp" + File.separator;
+		String fullPath = getDiskDrive() + File.separator + "Temp" + File.separator;
 		try {
 			File logFilePath = new File(fullPath);
+
+			// if the dir exists, it is not created again
 			logFilePath.mkdirs();
 			File logFile = new File(fullPath + formattedLogFileName);
+
+			// if the file exists, it is not created again
 			logFile.createNewFile();
 
 			this.logBW = new BufferedWriter(new FileWriter(logFile));
@@ -45,6 +49,7 @@ public class Logger {
 	}
 
 	public static synchronized Logger getLogger() {
+		// lazy instantiation
 		if (instance == null) {
 			instance = new Logger();
 		}
@@ -68,15 +73,17 @@ public class Logger {
 			logBW.newLine();
 			logBW.flush();
 		} catch (IOException e) {
-			System.err.println(e);
+			System.err.println("Error: Unable to write in log file.");
 		}
 	}
 
-	private static String gettingSurelyExistingDrive() {
+	private static String getDiskDrive() {
 		String winPath = System.getenv("windir");
 
 		return (winPath.split(Pattern.quote("\\")))[0];
 	}
+
+	// Singleton mintához szükséges tiltások, amelyek meggátolják, hogy újabb példány jöjjön létre
 
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
