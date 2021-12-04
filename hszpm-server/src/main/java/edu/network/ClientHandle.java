@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class ClientHandle extends Thread {
 
-	private Socket client;
+	private final Socket client;
 
 	public ClientHandle(Socket client) {
 		this.client = client;
@@ -28,7 +28,6 @@ public class ClientHandle extends Thread {
 		try {
 			in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 		} catch (IOException e) {
-			//ClientView.showErrorMessage("Server error: error while creating in/out streams");
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while creating in/out streams");
 
 			return;
@@ -38,7 +37,6 @@ public class ClientHandle extends Thread {
 		try {
 			paymentsInputStream = new FileInputStream(in.readLine());
 		} catch (IOException e) {
-			//ClientView.showErrorMessage("Server error: error while finding input tranzactions");
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while finding input tranzactions");
 
 			return;
@@ -48,7 +46,6 @@ public class ClientHandle extends Thread {
 		try {
 			paymentsOutputStream = new FileOutputStream(in.readLine());
 		} catch (IOException e) {
-			//ClientView.showErrorMessage("Server error: error while finding output file");
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while finding output file");
 
 			return;
@@ -58,7 +55,6 @@ public class ClientHandle extends Thread {
 		try {
 			mapOfCustomers = PayMetricsProcessor.getProcessor().process(paymentsInputStream, paymentsOutputStream);
 		} catch (IOException e) {
-			//ClientView.showErrorMessage("Server error: error while processing payments");
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while processing payments");
 
 			return;
@@ -70,7 +66,6 @@ public class ClientHandle extends Thread {
 			outClient.writeObject(mapOfCustomers);
 			outClient.flush();
 		} catch (IOException e) {
-			//ClientView.showErrorMessage("Server error: error while serializing map of customers");
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while serializing map of customers");
 		}
 
@@ -78,8 +73,7 @@ public class ClientHandle extends Thread {
 			in.close();
 			outClient.close();
 			client.close();
-		} catch (IOException e) {
-			//ClientView.showErrorMessage("Server error: error while closing socket");
+		} catch (IOException | NullPointerException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while closing socket");
 		}
 	}
