@@ -1,6 +1,6 @@
 package edu.gui;
 
-import edu.cnp.CnpParts;
+import edu.cnp.parts.CnpParts;
 import com.formdev.flatlaf.FlatDarkLaf;
 import org.json.JSONObject;
 

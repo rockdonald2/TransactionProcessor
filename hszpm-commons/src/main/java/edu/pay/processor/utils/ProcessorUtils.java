@@ -1,8 +1,8 @@
 package edu.pay.processor.utils;
 
-import edu.cnp.CnpParts;
+import edu.cnp.parts.CnpParts;
 import edu.cnp.CnpValidator;
-import edu.cnp.exception.CnpException;
+import edu.cnp.exception.cnp.CnpException;
 import edu.pay.error.PayError;
 import edu.pay.exception.pay.MissingDataException;
 import edu.pay.exception.pay.NegativePaymentException;
@@ -23,7 +23,6 @@ public class ProcessorUtils {
 	 *          tranzakciók
 	 */
 	public static Map<CnpParts, ArrayList<BigDecimal>> getCustomers(final List<String[]> dataInput, Set<PayError> errors) {
-		var validator = CnpValidator.getValidator();
 		var mapOfCustomers = new HashMap<CnpParts, ArrayList<BigDecimal>>();
 
 		for (int i = 0; i < dataInput.size(); i++) {
@@ -60,7 +59,7 @@ public class ProcessorUtils {
 
 			if (cnp == null) {
 				try {
-					cnp = validator.validateCnp(currentPayment[0]);
+					cnp = CnpValidator.validate(currentPayment[0]);
 				} catch (CnpException e) {
 					Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 					writeError(i + 1, e.getCodeType(), errors);

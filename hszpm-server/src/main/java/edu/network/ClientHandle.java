@@ -1,7 +1,6 @@
 package edu.network;
 
-import edu.cnp.CnpParts;
-import edu.pay.processor.PayProcessor;
+import edu.cnp.parts.CnpParts;
 import edu.utils.Logger;
 
 import java.io.*;

@@ -1,6 +1,6 @@
 package edu.network;
 
-import edu.cnp.CnpParts;
+import edu.cnp.parts.CnpParts;
 import edu.gui.ClientController;
 import edu.gui.ClientView;
 import edu.utils.Logger;

@@ -1,6 +1,6 @@
 package edu.gui;
 
-import edu.cnp.CnpParts;
+import edu.cnp.parts.CnpParts;
 import edu.network.Client;
 import org.json.JSONObject;
 import org.json.JSONTokener;

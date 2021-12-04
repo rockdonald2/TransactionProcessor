@@ -1,4 +1,4 @@
-package edu.cnp.exception;
+package edu.cnp.exception.cnp;
 
 public abstract class CnpException extends Exception {
 

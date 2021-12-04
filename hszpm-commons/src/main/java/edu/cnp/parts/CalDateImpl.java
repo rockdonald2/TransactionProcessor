@@ -1,8 +1,8 @@
-package edu.cnp;
+package edu.cnp.parts;
 
 import java.io.Serializable;
 
-class CalDateImpl implements CalDate, Serializable {
+class CalDateImpl extends CalDate implements Serializable {
 
     private final short year;
     private final byte month;
@@ -14,11 +14,10 @@ class CalDateImpl implements CalDate, Serializable {
      * @param date
      *              dátum "yyyy-MM-dd" formátumban
      */
-    CalDateImpl(String date) {
-        var dateElements = date.split("-");
-        this.year = Short.parseShort(dateElements[0]);
-        this.month = Byte.parseByte(dateElements[1]);
-        this.day = Byte.parseByte(dateElements[2]);
+    CalDateImpl(short year, byte month, byte day) {
+        this.year = year;
+        this.month = month;
+        this.day = day;
     }
 
     @Override

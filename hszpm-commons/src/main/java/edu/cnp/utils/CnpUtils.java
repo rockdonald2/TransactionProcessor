@@ -1,18 +1,18 @@
-package edu.cnp;
+package edu.cnp.utils;
 
-import edu.cnp.exception.CnpException;
-import edu.cnp.exception.CnpFormatException;
+import edu.cnp.exception.cnp.CnpException;
+import edu.cnp.exception.cnp.CnpFormatException;
 
-class CnpUtils {
+public class CnpUtils {
 
 	/**
 	 * CNP hossza
 	 */
-	static final int CNP_LENGTH = 13;
+	public static final int CNP_LENGTH = 13;
 	/**
 	 * Súlyok a súlyozott összeg számításához
 	 */
-	static final byte[] CONTROL_DIGIT_ARRAY = new byte[]{2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9};
+	public static final byte[] CONTROL_DIGIT_ARRAY = new byte[]{2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9};
 
 	/**
 	 * Felhasználva a CNP-t alkotó számjegyeket, kiszámolja annak súlyozott összegét.
@@ -21,7 +21,7 @@ class CnpUtils {
 	 * 										CNP-t alkotó számjegyek
 	 * @return súlyozott összeg
 	 */
-	static int calculateWeightedSum(byte[] cnpDigitArr) {
+	public static int calculateWeightedSum(byte[] cnpDigitArr) {
 		int digitSum = 0;
 
 		for (int i = 0; i < cnpDigitArr.length - 1; i++) {
@@ -39,7 +39,7 @@ class CnpUtils {
 	 * @return
 	 *          CNP tömbként
 	 */
-	static byte[] createByteCnpFromString(final String cnpString) throws CnpException {
+	public static byte[] createByteCnpFromString(final String cnpString) throws CnpException {
 		final var cnpDigits = new byte[cnpString.length()];
 
 		for (int i = 0; i < cnpString.length(); i++) {
@@ -61,7 +61,7 @@ class CnpUtils {
 	 * @return
 	 *          évszázad
 	 */
-	static String guessForeignerCentury(final String dateYearString) {
+	public static String guessForeignerCentury(final String dateYearString) {
 		return Byte.parseByte(dateYearString) <= 21 ? "20" : "19";
 	}
 
@@ -73,7 +73,7 @@ class CnpUtils {
 	 * 											évszázad karakterlánc
 	 * @return formatált String
 	 */
-	static String composeDate(final char[] dateCharArr, final String centuryString) {
+	public static String composeDate(final char[] dateCharArr, final String centuryString) {
 		var composedDate = new StringBuilder();
 
 		composedDate.append(centuryString);

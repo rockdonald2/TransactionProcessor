@@ -1,6 +1,6 @@
 package edu.pay.processor;
 
-import edu.cnp.CnpParts;
+import edu.cnp.parts.CnpParts;
 
 import java.io.*;
 import java.math.BigDecimal;

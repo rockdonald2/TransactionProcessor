@@ -15,7 +15,7 @@ import edu.pay.processor.dataloader.DataLoader;
 import edu.pay.processor.dataloader.DataLoaderFactory;
 import edu.pay.processor.utils.ProcessorUtils;
 import edu.pay.utils.PayUtils;
-import edu.cnp.CnpParts;
+import edu.cnp.parts.CnpParts;
 import edu.utils.Logger;
 
 class SimplePayProcessorImpl implements PayProcessor {

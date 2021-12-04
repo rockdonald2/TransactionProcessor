@@ -1,6 +1,6 @@
 package edu.gui;
 
-import edu.cnp.CnpParts;
+import edu.cnp.parts.CnpParts;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

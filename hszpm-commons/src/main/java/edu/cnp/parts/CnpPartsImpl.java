@@ -1,8 +1,8 @@
-package edu.cnp;
+package edu.cnp.parts;
 
 import java.io.Serializable;
 
-class CnpPartsImpl implements CnpParts, Serializable {
+class CnpPartsImpl extends CnpParts implements Serializable {
 
 	private final Sex sex;
 	private final Boolean isForeigner;
