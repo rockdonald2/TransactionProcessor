@@ -2,12 +2,14 @@ package edu.pay.metrics;
 
 import edu.pay.exception.general.metrics.MetricsOutputException;
 import edu.utils.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Objects;
 
 public class MetricsOutput {
 
@@ -18,7 +20,9 @@ public class MetricsOutput {
 	 * @param file
 	 *                              kimeneti File adatfolyama
 	 */
-	public static void writeToFile(PayMetrics metrics, FileOutputStream file) throws MetricsOutputException {
+	public static void writeToFile(PayMetrics metrics, @Nullable FileOutputStream file) throws MetricsOutputException {
+		if (Objects.isNull(file)) return;
+
 		var output = new JSONObject();
 		var metrices = metrics.metrices();
 

@@ -59,33 +59,37 @@ class SimplePayMetricsImpl implements SimplePayMetrics {
 
     /**
      * Külföldi személyek száma, akik intéztek fizetést.
+     * @return
      */
     @Override
-    public Integer foreigners() {
+    public int foreigners() {
         return foreigners;
     }
 
     /**
      * Kiskorúak által intézett fizetések száma.
+     * @return
      */
     @Override
-    public Integer paymentsByMinors() {
+    public int paymentsByMinors() {
         return paymentsByMinors;
     }
 
     /**
      * 5000 RON fölötti fizetések száma.
+     * @return
      */
     @Override
-    public Integer bigPayments() {
+    public int bigPayments() {
         return bigPayments;
     }
 
     /**
      * 5000 RON alatti fizetések, inkluzív.
+     * @return
      */
     @Override
-    public Integer smallPayments() {
+    public int smallPayments() {
         return smallPayments;
     }
 

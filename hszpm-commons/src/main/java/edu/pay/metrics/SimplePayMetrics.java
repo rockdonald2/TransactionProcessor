@@ -10,22 +10,22 @@ public interface SimplePayMetrics extends PayMetrics {
 	/**
 	 * Külföldi személyek száma, akik intéztek fizetést.
 	 */
-	Integer foreigners();
+	int foreigners();
 
 	/**
 	 * Kiskorúak által intézett fizetések száma.
 	 */
-	Integer paymentsByMinors();
+	int paymentsByMinors();
 
 	/**
 	 * 5000 RON fölötti fizetések száma.
 	 */
-	Integer bigPayments();
+	int bigPayments();
 
 	/**
 	 * 5000 RON alatti fizetések, inkluzív.
 	 */
-	Integer smallPayments();
+	int smallPayments();
 
 	/**
 	 * Kifizetések átlaga, két tizedes pontossággal.
