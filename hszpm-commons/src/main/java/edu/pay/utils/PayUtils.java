@@ -15,15 +15,7 @@ public class PayUtils {
 	 * @return összfizetések száma Integer
 	 */
 	public static int getTotalTransactionNumber(Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers) {
-		int counter = 0;
-
-		for (var customer : mapOfCustomers.keySet()) {
-			for (var ignored : mapOfCustomers.get(customer)) {
-				counter++;
-			}
-		}
-
-		return counter;
+		return mapOfCustomers.keySet().size();
 	}
 
 	/**
@@ -33,15 +25,8 @@ public class PayUtils {
 	 * @return BigDecimal
 	 */
 	public static BigDecimal sumTransactions(Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers) {
-		var sum = BigDecimal.ZERO;
-
-		for (var customer : mapOfCustomers.keySet()) {
-			for (var v : mapOfCustomers.get(customer)) {
-				sum = sum.add(v);
-			}
-		}
-
-		return sum;
+		return mapOfCustomers.keySet().stream().map(customer -> mapOfCustomers.get(customer).stream().reduce(BigDecimal.ZERO, BigDecimal::add))
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
 }

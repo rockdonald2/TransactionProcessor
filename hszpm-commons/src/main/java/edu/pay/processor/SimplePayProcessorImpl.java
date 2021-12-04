@@ -5,20 +5,15 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-import edu.cnp.CnpValidator;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReaderBuilder;
-import com.opencsv.exceptions.CsvException;
 import edu.pay.error.PayError;
 import edu.pay.exception.general.MetricsException;
 import edu.pay.metrics.MetricsOutput;
 import edu.pay.metrics.PayMetricsFactory;
 import edu.pay.metrics.SimplePayMetrics;
+import edu.pay.processor.dataloader.DataLoader;
+import edu.pay.processor.dataloader.DataLoaderFactory;
+import edu.pay.processor.utils.ProcessorUtils;
 import edu.pay.utils.PayUtils;
-import edu.pay.exception.pay.MissingDataException;
-import edu.pay.exception.pay.NegativePaymentException;
-import edu.pay.exception.pay.PayException;
-import edu.cnp.exception.CnpException;
 import edu.cnp.CnpParts;
 import edu.utils.Logger;
 
@@ -28,9 +23,10 @@ class SimplePayProcessorImpl implements PayProcessor {
 
 	@Override
 	public Map<CnpParts, ArrayList<BigDecimal>> process(FileInputStream paymentsInputStream, FileOutputStream metricsOutputStream) throws IOException {
-		var dataInput = loadData(paymentsInputStream);
-
-		var mapOfCustomers = getCustomers(dataInput);
+		DataLoaderFactory loaderFactory = new DataLoaderFactory();
+		DataLoader loader = loaderFactory.getLoader("csv");
+		var dataInput = loader.loadData(paymentsInputStream);
+		var mapOfCustomers = ProcessorUtils.getCustomers(dataInput, errors);
 
 		PayMetricsFactory metricsFactory = new PayMetricsFactory();
 		try {
@@ -57,6 +53,7 @@ class SimplePayProcessorImpl implements PayProcessor {
 			MetricsOutput.writeToFile(metrics, metricsOutputStream);
 		} catch (MetricsException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
+			// TODO: exception
 		}
 
 		return mapOfCustomers;
@@ -71,16 +68,9 @@ class SimplePayProcessorImpl implements PayProcessor {
 	 *          fizetések száma
 	 */
 	int getPaymentsByMinors(final Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers) {
-		int counter = 0;
 		final var currentYear = Calendar.getInstance().get(Calendar.YEAR);
 
-		for (var customer : mapOfCustomers.keySet()) {
-			if (currentYear - customer.birthDate().year() <= 18) {
-				counter++;
-			}
-		}
-
-		return counter;
+		return (int) mapOfCustomers.keySet().stream().filter(k -> (currentYear - k.birthDate().year()) <= 18).count();
 	}
 
 	/**
@@ -92,17 +82,9 @@ class SimplePayProcessorImpl implements PayProcessor {
 	 *          összeg
 	 */
 	BigDecimal getTotalAmountCapitalCity(final Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers) {
-		var sum = BigDecimal.ZERO;
-
-		for (var customer : mapOfCustomers.keySet()) {
-			if (customer.county().getAbrv().equals("BU") && !customer.foreigner()) {
-				for (var v : mapOfCustomers.get(customer)) {
-					sum = sum.add(v);
-				}
-			}
-		}
-
-		return sum;
+		return mapOfCustomers.keySet().stream().filter(k -> k.county().getAbrv().equals("BU") && !k.foreigner())
+						.map(k -> mapOfCustomers.get(k).stream().reduce(BigDecimal.ZERO, BigDecimal::add))
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
 	/**
@@ -114,15 +96,7 @@ class SimplePayProcessorImpl implements PayProcessor {
 	 *          külföldi személyek száma
 	 */
 	Integer getForeigners(final Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers) {
-		Set<String> coll = new HashSet<>();
-
-		for (var customer : mapOfCustomers.keySet()) {
-			if (customer.foreigner()) {
-				coll.add(customer.toString());
-			}
-		}
-
-		return coll.size();
+		return (int) mapOfCustomers.keySet().stream().filter(CnpParts::foreigner).count();
 	}
 
 	/**
@@ -136,18 +110,10 @@ class SimplePayProcessorImpl implements PayProcessor {
 	 *          fizetések száma
 	 */
 	Integer getPaymentsNumberByLimit(final Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers, final String limit) {
-		int counter = 0;
 		final var upperLimit = new BigDecimal(limit);
 
-		for (var customer : mapOfCustomers.keySet()) {
-			for (var v : mapOfCustomers.get(customer)) {
-				if (v.compareTo(upperLimit) <= 0) {
-					counter++;
-				}
-			}
-		}
-
-		return counter;
+		return (int) mapOfCustomers.keySet().stream().map(k -> mapOfCustomers.get(k).stream().reduce(BigDecimal.ZERO, BigDecimal::add))
+						.filter(k -> k.compareTo(upperLimit) <= 0).count();
 	}
 
 	Integer getSmallPaymentsNumber(final Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers) {
@@ -168,110 +134,6 @@ class SimplePayProcessorImpl implements PayProcessor {
 	 */
 	BigDecimal getAverage(final Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers) {
 		return PayUtils.sumTransactions(mapOfCustomers).divide(BigDecimal.valueOf(PayUtils.getTotalTransactionNumber(mapOfCustomers)), 2, RoundingMode.HALF_EVEN);
-	}
-
-	/**
-	 * Beolvassa a tranzakciók listáját egy CSV állományból, amely mezőelválasztoként a ';'-t használja.
-	 *
-	 * @param paymentsInputStream
-	 *                              CSV állomány
-	 * @return
-	 *          állomány sorai
-	 * @throws IOException
-	 *                      ha az állomány nem található, vagy beolvasási hiba lépett fel
-	 */
-	List<String[]> loadData(final InputStream paymentsInputStream) throws IOException {
-		var csvParser = new CSVParserBuilder()
-						.withSeparator(';')
-						.build();
-
-		List<String[]> rows;
-		try (var reader = new CSVReaderBuilder(new InputStreamReader(paymentsInputStream))
-						.withCSVParser(csvParser)
-						.build()) {
-			rows = reader.readAll();
-		} catch (CsvException e) {
-			throw new IOException(e.getMessage());
-		}
-
-		return rows;
-	}
-
-	/**
-	 * Ellenőrzi a fizetésekhez tartozó CNP-ket, és visszatéríti a fizetéseket.
-	 *
-	 * @param dataInput
-	 *                  CSV állomány sorai
-	 * @return
-	 *          tranzakciók
-	 */
-	Map<CnpParts, ArrayList<BigDecimal>> getCustomers(final List<String[]> dataInput) {
-		var validator = CnpValidator.getValidator();
-		var mapOfCustomers = new HashMap<CnpParts, ArrayList<BigDecimal>>();
-
-		for (int i = 0; i < dataInput.size(); i++) {
-			final var currentPayment = dataInput.get(i);
-
-			if (currentPayment.length != 2) {
-				continue;
-			}
-
-			CnpParts cnp = null;
-			BigDecimal paymentAmount;
-
-			try {
-				if (currentPayment[0].equals("") || currentPayment[1].equals("")) {
-					throw new MissingDataException("Missing data from line");
-				}
-
-				paymentAmount = new BigDecimal(currentPayment[1]);
-
-				if (paymentAmount.compareTo(BigDecimal.ZERO) < 0) {
-					throw new NegativePaymentException("Invalid payment with negative value");
-				}
-			} catch (PayException e) {
-				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
-				writeError(i + 1, e.getCodeType());
-				continue;
-			}
-
-			for (var j : mapOfCustomers.keySet()) {
-				if (j.toString().equals(currentPayment[0])) {
-					cnp = j;
-				}
-			}
-
-			if (cnp == null) {
-				try {
-					cnp = validator.validateCnp(currentPayment[0]);
-				} catch (CnpException e) {
-					Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
-					writeError(i + 1, e.getCodeType());
-					continue;
-				}
-			}
-
-			if (!mapOfCustomers.containsKey(cnp)) {
-				mapOfCustomers.put(cnp, new ArrayList<>());
-			}
-
-			mapOfCustomers.get(cnp).add(paymentAmount);
-		}
-
-		return mapOfCustomers;
-	}
-
-	/**
-	 * Kiír egy hibapéldányt a hibatömbbe, együtt annak típusával és sorszámával, ahol a hiba előfordult.
-	 *
-	 * @param lineNumber
-	 *                      sor
-	 * @param errorType
-	 *                      hibatípus
-	 */
-	private void writeError(final int lineNumber, final int errorType) {
-		// TODO: unhandled runtime exception
-		errors.add(new PayError.Builder().atLine(lineNumber).withType(errorType).build());
 	}
 
 }
