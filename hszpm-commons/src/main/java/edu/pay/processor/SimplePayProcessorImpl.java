@@ -8,7 +8,8 @@ import java.util.*;
 import edu.pay.error.PayError;
 import edu.pay.exception.general.metrics.MetricsException;
 import edu.pay.exception.general.metrics.MetricsOutputException;
-import edu.pay.metrics.MetricsOutput;
+import edu.pay.metrics.MetricsOutputFactory;
+import edu.pay.metrics.output.JSONOutput;
 import edu.pay.metrics.PayMetrics;
 import edu.pay.metrics.PayMetricsFactory;
 import edu.pay.metrics.SimplePayMetrics;
@@ -57,7 +58,8 @@ class SimplePayProcessorImpl implements PayProcessor {
 				metrics.setAllMetricesNullOrEmpty();
 			}
 
-			MetricsOutput.writeToFile(metrics, metricsOutputStream);
+			MetricsOutputFactory outputFactory = new MetricsOutputFactory();
+			outputFactory.getWriter("json").writeToFile(metrics, metricsOutputStream);
 		} catch (MetricsException | MetricsOutputException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 		}
