@@ -21,17 +21,17 @@ public class CnpTests {
 
 		@Test
 		public void case3() {
-				Assert.assertEquals("AB", CnpValidator.validate(" 6000722018021").county().getAbrv());
+			Assert.assertEquals("AB", CnpValidator.validate(" 6000722018021").county().getAbrv());
 		}
 
 		@Test
 		public void case4() {
-			Assert.assertEquals("AB",CnpValidator.validate(" 2990722015531 ").county().getAbrv());
+			Assert.assertEquals("AB", CnpValidator.validate(" 2990722015531 ").county().getAbrv());
 		}
 
 		@Test
 		public void case5() {
-				Assert.assertEquals("DJ", CnpValidator.validate(" 2990722168675").county().getAbrv());
+			Assert.assertEquals("DJ", CnpValidator.validate(" 2990722168675").county().getAbrv());
 		}
 
 		@Test
@@ -41,7 +41,7 @@ public class CnpTests {
 
 		@Test
 		public void caseThatThrows2() {
-			Assert.assertThrows(CnpFormatException.class, () ->CnpValidator.validate("2990722aa8675"));
+			Assert.assertThrows(CnpFormatException.class, () -> CnpValidator.validate("2990722aa8675"));
 		}
 
 		@Test
@@ -55,32 +55,32 @@ public class CnpTests {
 
 		@Test
 		public void case1() {
-				final var expected = new CalDate.Builder().ofDate("2000-07-22").build();
-				Assert.assertEquals(expected.toString(), CnpValidator.validate("5000722194033").birthDate().toString());
+			final var expected = new CalDate.Builder().ofDate("2000-07-22").build();
+			Assert.assertEquals(expected.toString(), CnpValidator.validate("5000722194033").birthDate().toString());
 		}
 
 		@Test
 		public void case2() {
 			final var expected = new CalDate.Builder().ofDate("2000-5-22").build();
-				Assert.assertEquals(expected.toString(),  CnpValidator.validate("6000522405695").birthDate().toString());
+			Assert.assertEquals(expected.toString(), CnpValidator.validate("6000522405695").birthDate().toString());
 		}
 
 		@Test
 		public void case3() {
 			final var expected = new CalDate.Builder().ofDate("1911-5-22").build();
-				Assert.assertEquals(expected.toString(), CnpValidator.validate("1110522326297").birthDate().toString());
+			Assert.assertEquals(expected.toString(), CnpValidator.validate("1110522326297").birthDate().toString());
 		}
 
 		@Test
 		public void case4() {
 			final var expected = new CalDate.Builder().ofDate("2011-11-1").build();
-				Assert.assertEquals(expected.toString(), CnpValidator.validate("6111101098548").birthDate().toString());
+			Assert.assertEquals(expected.toString(), CnpValidator.validate("6111101098548").birthDate().toString());
 		}
 
 		@Test
 		public void case5() {
 			final var expected = new CalDate.Builder().ofDate("1899-12-12").build();
-				Assert.assertEquals(expected.toString(), CnpValidator.validate("3991212152713").birthDate().toString());
+			Assert.assertEquals(expected.toString(), CnpValidator.validate("3991212152713").birthDate().toString());
 		}
 
 		@Test
@@ -155,22 +155,22 @@ public class CnpTests {
 
 		@Test
 		public void case1() {
-				Assert.assertTrue(CnpValidator.validate("8990722165726").foreigner());
+			Assert.assertTrue(CnpValidator.validate("8990722165726").foreigner());
 		}
 
 		@Test
 		public void case2() {
-				Assert.assertTrue(CnpValidator.validate("7990722169481").foreigner());
+			Assert.assertTrue(CnpValidator.validate("7990722169481").foreigner());
 		}
 
 		@Test
 		public void case3() {
-				Assert.assertFalse(CnpValidator.validate("1990722169552").foreigner());
+			Assert.assertFalse(CnpValidator.validate("1990722169552").foreigner());
 		}
 
 		@Test
 		public void case4() {
-				Assert.assertFalse(CnpValidator.validate("1500722088076").foreigner());
+			Assert.assertFalse(CnpValidator.validate("1500722088076").foreigner());
 		}
 
 		@Test
@@ -194,22 +194,22 @@ public class CnpTests {
 
 		@Test
 		public void case2() {
-				Assert.assertEquals(Sex.F, CnpValidator.validate("2500722089125").sex());
+			Assert.assertEquals(Sex.F, CnpValidator.validate("2500722089125").sex());
 		}
 
 		@Test
 		public void case3() {
-				Assert.assertEquals(Sex.M, CnpValidator.validate("1500722089262").sex());
+			Assert.assertEquals(Sex.M, CnpValidator.validate("1500722089262").sex());
 		}
 
 		@Test
 		public void case4() {
-				Assert.assertEquals(Sex.M, CnpValidator.validate("5000722085375").sex());
+			Assert.assertEquals(Sex.M, CnpValidator.validate("5000722085375").sex());
 		}
 
 		@Test
 		public void case5() {
-				Assert.assertEquals(Sex.M, CnpValidator.validate("7000722086784").sex());
+			Assert.assertEquals(Sex.M, CnpValidator.validate("7000722086784").sex());
 		}
 
 	}

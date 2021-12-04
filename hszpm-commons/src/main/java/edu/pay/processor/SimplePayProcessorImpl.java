@@ -9,7 +9,6 @@ import edu.pay.error.PayError;
 import edu.pay.exception.general.metrics.MetricsException;
 import edu.pay.exception.general.metrics.MetricsOutputException;
 import edu.pay.metrics.MetricsOutputFactory;
-import edu.pay.metrics.output.JSONOutput;
 import edu.pay.metrics.PayMetrics;
 import edu.pay.metrics.PayMetricsFactory;
 import edu.pay.metrics.SimplePayMetrics;
@@ -19,6 +18,7 @@ import edu.pay.processor.utils.ProcessorUtils;
 import edu.pay.utils.PayUtils;
 import edu.cnp.parts.CnpParts;
 import edu.utils.Logger;
+import edu.utils.PropertyProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ class SimplePayProcessorImpl implements PayProcessor {
 	@Override
 	public Map<CnpParts, ArrayList<BigDecimal>> process(@NotNull FileInputStream paymentsInputStream, @Nullable FileOutputStream metricsOutputStream) {
 		DataLoaderFactory loaderFactory = new DataLoaderFactory();
-		DataLoader loader = loaderFactory.getLoader("csv");
+		DataLoader loader = loaderFactory.getLoader(PropertyProvider.getProperty("input.format"));
 		var dataInput = loader.loadData(paymentsInputStream);
 		var mapOfCustomers = ProcessorUtils.getCustomers(dataInput, errors);
 
@@ -59,7 +59,7 @@ class SimplePayProcessorImpl implements PayProcessor {
 			}
 
 			MetricsOutputFactory outputFactory = new MetricsOutputFactory();
-			outputFactory.getWriter("json").writeToFile(metrics, metricsOutputStream);
+			outputFactory.getWriter(PropertyProvider.getProperty("output.format")).writeToFile(metrics, metricsOutputStream);
 		} catch (MetricsException | MetricsOutputException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 		}

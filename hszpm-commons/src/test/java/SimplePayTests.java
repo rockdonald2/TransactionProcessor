@@ -17,7 +17,7 @@ public class SimplePayTests {
 		PayProcessorFactory processorFactory = new PayProcessorFactory();
 		testProcessor = processorFactory.getProcessor("simple");
 		try {
-			testProcessor.process(new FileInputStream(SimplePayTests.class.getResource("testData.csv").getPath()), null);
+			testProcessor.process(new FileInputStream(SimplePayTests.class.getResource("/testData.csv").getPath()), null);
 			testMetrics = (SimplePayMetrics) testProcessor.getProcessedMetrics();
 		} catch (FileNotFoundException | NullPointerException ignored) {}
 	}
