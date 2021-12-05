@@ -41,22 +41,6 @@ class SimplePayMetricsImpl implements SimplePayMetrics {
     SimplePayMetricsImpl() {
     }
 
-    @Override
-    public Map<String, Pair<Object, Type>> metrices() {
-        Map<String, Pair<Object, Type>> ret = new HashMap<>();
-
-        Arrays.stream(this.getClass().getDeclaredFields()).forEach(f ->
-        {
-            try {
-                ret.put(f.getName(), new ImmutablePair<>(this.getClass().getMethod(f.getName()).invoke(null), f.getGenericType()));
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                throw new MetricsException("Failed to create metrices.");
-            }
-        });
-
-        return ret;
-    }
-
     /**
      * Külföldi személyek száma, akik intéztek fizetést.
      * @return

@@ -41,7 +41,7 @@ public class JSONOutput implements MetricsOutput {
 
 		var o = new OutputStreamWriter(file);
 		try {
-			o.write(metrics.toString());
+			o.write(output.toString());
 			o.flush();
 			o.close();
 		} catch (IOException e) {
