@@ -17,7 +17,7 @@ public class Server {
 				// ! elérhető kellene legyen egy parancs, amivel lehetséges a szerver leállítása a folyamat megölése helyett
 			}
 		} catch (IOException e) {
-			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Error while creating ServerSocket");
+			Logger.getLogger().logMessage(Logger.LogLevel.CRITICAL, "Error while creating ServerSocket");
 		}
 	}
 

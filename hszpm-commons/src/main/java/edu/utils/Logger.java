@@ -69,9 +69,13 @@ public class Logger {
 
 		try {
 			logBW.write(loggedMessage);
-			System.err.println(loggedMessage);
+			System.out.println(loggedMessage);
 			logBW.newLine();
 			logBW.flush();
+
+			if (level.toString().equals(LogLevel.CRITICAL.toString())) {
+				System.exit(1);
+			}
 		} catch (IOException e) {
 			System.err.println("Error: Unable to write in log file.");
 		}

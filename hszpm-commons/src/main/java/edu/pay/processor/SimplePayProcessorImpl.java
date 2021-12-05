@@ -6,8 +6,11 @@ import java.math.RoundingMode;
 import java.util.*;
 
 import edu.pay.error.PayError;
+import edu.pay.exception.general.UnsupportedMetricsTypeException;
+import edu.pay.exception.general.UnsupportedOutputException;
 import edu.pay.exception.general.metrics.MetricsException;
 import edu.pay.exception.general.metrics.MetricsOutputException;
+import edu.pay.exception.general.processor.ProcessFailureException;
 import edu.pay.metrics.MetricsOutputFactory;
 import edu.pay.metrics.PayMetrics;
 import edu.pay.metrics.PayMetricsFactory;
@@ -28,7 +31,7 @@ class SimplePayProcessorImpl implements PayProcessor {
 	private SimplePayMetrics metrics;
 
 	@Override
-	public Map<CnpParts, ArrayList<BigDecimal>> process(@NotNull FileInputStream paymentsInputStream, @Nullable FileOutputStream metricsOutputStream) {
+	public Map<CnpParts, ArrayList<BigDecimal>> process(@NotNull FileInputStream paymentsInputStream, @Nullable FileOutputStream metricsOutputStream) throws ProcessFailureException {
 		DataLoaderFactory loaderFactory = new DataLoaderFactory();
 		DataLoader loader = loaderFactory.getLoader(PropertyProvider.getProperty("input.format"));
 		var dataInput = loader.loadData(paymentsInputStream);
@@ -60,8 +63,9 @@ class SimplePayProcessorImpl implements PayProcessor {
 
 			MetricsOutputFactory outputFactory = new MetricsOutputFactory();
 			outputFactory.getWriter(PropertyProvider.getProperty("output.format")).writeToFile(metrics, metricsOutputStream);
-		} catch (MetricsException | MetricsOutputException e) {
+		} catch (MetricsException | MetricsOutputException | UnsupportedMetricsTypeException | UnsupportedOutputException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
+			throw new ProcessFailureException(e.getMessage());
 		}
 
 		return mapOfCustomers;
