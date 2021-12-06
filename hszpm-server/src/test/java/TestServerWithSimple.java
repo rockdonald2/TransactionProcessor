@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class TestServer {
+public class TestServerWithSimple {
 
 	private static JSONObject output;
 	private static ServerSocket server;
@@ -37,18 +37,18 @@ public class TestServer {
 
 		PrintWriter out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
 		// TODO: függetleníteni a beállított input és output formátumtól is
-		out.println(TestServer.class.getResource("testData.csv").getPath());
-		out.println(TestServer.class.getResource("testResult.json").getPath());
+		out.println(TestServerWithSimple.class.getResource("testData.csv").getPath());
+		out.println(TestServerWithSimple.class.getResource("testResult.json").getPath());
 		out.flush();
 
 		ObjectInputStream in = new ObjectInputStream(s.getInputStream());
 		Map<CnpParts, List<BigDecimal>> customers = (Map<CnpParts, List<BigDecimal>>) in.readObject();
-		output = new JSONObject(IOUtils.toString(new FileInputStream(TestServer.class.getResource("testResult.json").getPath()), StandardCharsets.UTF_8));
+		output = new JSONObject(IOUtils.toString(new FileInputStream(TestServerWithSimple.class.getResource("testResult.json").getPath()), StandardCharsets.UTF_8));
 
 		s.close();
 		out.close();
 		in.close();
-		exService.awaitTermination(30, TimeUnit.SECONDS);
+		exService.awaitTermination(10, TimeUnit.SECONDS);
 		exService.shutdownNow();
 	}
 
