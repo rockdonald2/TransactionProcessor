@@ -1,10 +1,11 @@
 package edu.gui;
 
 import edu.cnp.parts.CnpParts;
-import com.formdev.flatlaf.FlatDarkLaf;
+import edu.utils.Logger;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
 import java.io.File;
 import java.math.BigDecimal;
@@ -23,10 +24,16 @@ public class ClientView extends JFrame {
 	private ClientController controller;
 
 	public ClientView() {
-		try {
-			UIManager.setLookAndFeel(new FlatDarkLaf());
-		} catch( Exception ex ) {
-			System.err.println( "Failed to initialize LaF" );
+		for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+			if ("Nimbus".equals(info.getName())) {
+				try {
+					UIManager.setLookAndFeel(info.getClassName());
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+					Logger.getLogger().logMessage(Logger.LogLevel.CRITICAL, "Failed to initialize look and feel.");
+				}
+
+				break;
+			}
 		}
 
 		this.setTitle("Payments processor");

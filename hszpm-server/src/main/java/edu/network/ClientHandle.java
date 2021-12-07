@@ -71,7 +71,8 @@ public class ClientHandle extends Thread {
 				outClient.writeObject(mapOfCustomers);
 				outClient.flush();
 			} catch (IOException e) {
-				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while serializing map of customers");
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while serializing map of customers.");
+				throw new SocketFailureException("Error while serializing map of customers.");
 			}
 		} catch (ServerException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
@@ -83,6 +84,9 @@ public class ClientHandle extends Thread {
 				assert outClient != null;
 				outClient.close();
 				client.close();
+
+				ClientHandlePool pool = ClientHandlePool.getInstance();
+				pool.decrementClients();
 			} catch (IOException | NullPointerException e) {
 				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while closing socket");
 			}

@@ -94,6 +94,7 @@ public class Client {
 
 		try {
 			out.close();
+			assert inClient != null;
 			inClient.close();
 			s.close();
 		} catch (IOException e) {

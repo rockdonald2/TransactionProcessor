@@ -15,7 +15,7 @@ import java.util.*;
 public class ProcessorUtils {
 
 	/**
-	 * Ellenőrzi a fizetésekhez tartozó CNP-ket, és visszatéríti a fizetéseket.
+	 * Ellenőrzi a fizetésekhez tartozó CNP-ket, és visszatéríti a fizetéseket. Nem szükséges szinkronizáltnak lennie, hiszen thread-local változók jelennek csak meg!
 	 *
 	 * @param dataInput
 	 *                  CSV állomány sorai

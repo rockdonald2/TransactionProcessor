@@ -6,6 +6,14 @@ import edu.cnp.utils.CnpUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 
+/*
+TODO
+* Jobb lenne, ha egy ValidatorPool-t hoznek letre, mert elmeletben a jelenlegi static es synchronized megoldassal egyszerre egyetlen kliens szolgalhatnank ki,
+* hiszen meghivodik a ProcessorUtils getCustomers metodusa, ami beolvassa az allomanyt, stb, majd az hivja a validatort,
+* az egesz allomany beolvasas megkellene tortenjen, mielott egy ujabb kliensre ternenk,
+* valojaban ezen a ponton tul mar mukodik a parhuzamossag, azonban itt nem
+* */
+
 public class CnpValidator {
 
   private enum CnpPart {
@@ -36,8 +44,8 @@ public class CnpValidator {
 
   }
 
-  public static CnpParts validate(String cnp) throws CnpException {
-    cnp = cnp.trim();
+  // ! Nem szükséges a szinkronizáltság, thread-local változók jelennek csak meg
+  public static CnpParts validate(final String cnp) throws CnpException {
     validateLength(cnp);
     validateFormat(cnp);
     var sex = getSex(cnp);
