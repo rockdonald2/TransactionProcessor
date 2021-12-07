@@ -1,88 +1,183 @@
 package edu.gui;
 
-import edu.cnp.parts.CnpParts;
-import edu.utils.Logger;
-import org.json.JSONObject;
+import edu.gui.utils.UIUtils;
+import edu.utils.PropertyProvider;
 
 import javax.swing.*;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
-import java.math.BigDecimal;
+import java.util.Map;
 
 public class ClientView extends JFrame {
 
-	private final JButton requestProcess;
-	private final JButton showInputFileChooser;
-	private final JButton showOutputFileChooser;
-	private final JButton showData;
-	private final JButton showMetrices;
-	private final JPanel contentPanel;
-	private final JList cnpList;
-	private final JScrollPane scrollableList;
+	private final Map<String, Font> customFont;
+	private final JPanel contentPanel; // főpanel
+	private JPanel controlsPanel; // felső vezérlőpanel
+	private JComboBox<String> inputFormatsList;
+	private JComboBox<String> outputFormatsList;
+	private JComboBox<String> metricsTypesList;
+	private JPanel chooserPanel;
+	private JButton btnInputFileChooser;
+	private JButton btnOutputFileChooser;
+	private JPanel processPanel;
+	private JButton processBtn;
 
 	private ClientController controller;
 
-	public ClientView() {
-		for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-			if ("Nimbus".equals(info.getName())) {
-				try {
-					UIManager.setLookAndFeel(info.getClassName());
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-					Logger.getLogger().logMessage(Logger.LogLevel.CRITICAL, "Failed to initialize look and feel.");
-				}
+	public ClientView(ClientController controller) {
+		this.controller = controller;
 
-				break;
-			}
-		}
+		UIUtils.initLookAndFeel();
+		customFont = UIUtils.loadFont();
 
-		this.setTitle("Payments processor");
-
-		this.requestProcess = new JButton("Request process of payments");
-		this.requestProcess.setEnabled(false);
-
-		this.showInputFileChooser = new JButton("Input .csv file");
-		this.showOutputFileChooser = new JButton("Output .json file");
-		this.showData = new JButton("Show information");
-		this.showData.setEnabled(false);
-		this.showMetrices = new JButton("Show metrices");
-		this.showMetrices.setEnabled(false);
+		this.setTitle("Transaction processor");
 
 		contentPanel = new JPanel();
-		contentPanel.setLayout(new GridLayout(6, 1));
+		contentPanel.setLayout(new GridLayout(3, 1));
 		contentPanel.setPreferredSize(new Dimension(this.getWidth(), this.getHeight()));
 
-		contentPanel.add(showInputFileChooser);
-		contentPanel.add(showOutputFileChooser);
-		contentPanel.add(requestProcess);
+		initControlsPanel();
+		contentPanel.add(controlsPanel);
 
-		cnpList = new JList();
-		scrollableList = new JScrollPane(cnpList);
-		contentPanel.add(scrollableList);
-		contentPanel.add(showData);
-		contentPanel.add(showMetrices);
+		initChooserPanel();
+		contentPanel.add(chooserPanel);
 
-		this.showInputFileChooser.addActionListener(e -> {
-			controller.setInputPath(showChooser());
-		});
-
-		this.showOutputFileChooser.addActionListener(e -> {
-			controller.setOutputPath(showChooser());
-		});
-
-		this.requestProcess.addActionListener(e -> {
-			controller.requestProcess();
-		});
-
-		this.showData.addActionListener(e -> {
-			controller.requestShowData((CnpParts) cnpList.getSelectedValue());
-		});
-
-		this.showMetrices.addActionListener(e -> {
-			controller.requestShowMetrices();
-		});
+		initProcessBtn();
+		contentPanel.add(processPanel);
 
 		this.setContentPane(contentPanel);
+	}
+
+	private void initControlsPanel() {
+		controlsPanel = new JPanel();
+		controlsPanel.setLayout(new GridLayout(2, 1));
+		JLabel heading = new JLabel("Transaction processor", SwingConstants.CENTER);
+		heading.setFont(customFont.get("24"));
+		controlsPanel.add(heading);
+
+		JPanel controlsGroup = new JPanel();
+		controlsGroup.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(5, 5, 5, 5);
+		gbc.anchor = GridBagConstraints.LINE_START;
+
+		JLabel inputLabel = new JLabel("Input file format");
+		inputLabel.setFont(customFont.get("14"));
+		inputFormatsList = new JComboBox<>(new String[] { "csv" });
+		inputFormatsList.setSelectedItem(PropertyProvider.getProperty("input.format"));
+		inputFormatsList.setFont(customFont.get("13"));
+		inputFormatsList.addItemListener(e -> PropertyProvider.setProperty("input.format", String.valueOf(inputFormatsList.getSelectedItem())));
+
+		gbc.gridx = 0;
+		gbc.weightx = 0.5;
+		gbc.gridy = 0;
+		gbc.fill = GridBagConstraints.VERTICAL;
+		controlsGroup.add(inputLabel, gbc);
+
+		gbc.gridx = 1;
+		gbc.weightx = 3;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridy = 0;
+		controlsGroup.add(inputFormatsList, gbc);
+
+		JLabel outputLabel = new JLabel("Output file format");
+		outputLabel.setFont(customFont.get("14"));
+		outputFormatsList = new JComboBox<>(new String[] { "json" });
+		outputFormatsList.setFont(customFont.get("13"));
+		outputFormatsList.addItemListener(e -> PropertyProvider.setProperty("output.format", String.valueOf(outputFormatsList.getSelectedItem())));
+		outputFormatsList.setSelectedItem(PropertyProvider.getProperty("output.format"));
+
+		gbc.gridx = 0;
+		gbc.weightx = 0.5;
+		gbc.gridy = 1;
+		gbc.fill = GridBagConstraints.VERTICAL;
+		controlsGroup.add(outputLabel, gbc);
+
+		gbc.gridx = 1;
+		gbc.weightx = 3;
+		gbc.gridy = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		controlsGroup.add(outputFormatsList, gbc);
+
+		JLabel typesLabel = new JLabel("Metrics format");
+		typesLabel.setFont(customFont.get("14"));
+		metricsTypesList = new JComboBox<>(new String[] { "simple" });
+		metricsTypesList.setFont(customFont.get("13"));
+		metricsTypesList.addItemListener(e -> PropertyProvider.setProperty("processor.type", String.valueOf(metricsTypesList.getSelectedItem())));
+		metricsTypesList.setSelectedItem(PropertyProvider.getProperty("processor.type"));
+
+		gbc.gridx = 0;
+		gbc.weightx = 0.5;
+		gbc.gridy = 2;
+		gbc.fill = GridBagConstraints.VERTICAL;
+		controlsGroup.add(typesLabel, gbc);
+
+		gbc.gridx = 1;
+		gbc.weightx = 3;
+		gbc.gridy = 2;
+		gbc.fill = GridBagConstraints.BOTH;
+		controlsGroup.add(metricsTypesList, gbc);
+
+		controlsPanel.add(controlsGroup);
+	}
+
+	private void initChooserPanel() {
+		chooserPanel = new JPanel();
+		chooserPanel.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(5, 5, 5, 5);
+		gbc.anchor = GridBagConstraints.LINE_START;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+
+		btnInputFileChooser = new JButton("Select input file");
+		btnInputFileChooser.setFont(customFont.get("13"));
+		btnInputFileChooser.addActionListener(e -> {
+			File selected = showChooser();
+
+			if (selected != null) {
+				btnInputFileChooser.setText(String.format("Selected %s", selected.getName()));
+			} else {
+				btnInputFileChooser.setText("Select input file");
+			}
+		});
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		chooserPanel.add(btnInputFileChooser, gbc);
+
+		btnOutputFileChooser = new JButton("Select output file");
+		btnOutputFileChooser.setFont(customFont.get("13"));
+		btnOutputFileChooser.addActionListener(e -> {
+			File selected = showChooser();
+
+			if (selected != null) {
+				btnOutputFileChooser.setText(String.format("Selected %s", selected.getName()));
+			} else {
+				btnOutputFileChooser.setText("Select input file");
+			}
+		});
+
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		chooserPanel.add(btnOutputFileChooser, gbc);
+	}
+
+	private void initProcessBtn() {
+		processPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		processBtn = new JButton("Process transactions");
+		processBtn.setFont(customFont.get("18"));
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.insets = new Insets(5, 5, 5, 5);
+		processPanel.add(processBtn, gbc);
 	}
 
 	/**
@@ -106,79 +201,6 @@ public class ClientView extends JFrame {
 
 	public static void showInformationMessage(String message) {
 		JOptionPane.showMessageDialog(null, message, "Information", JOptionPane.INFORMATION_MESSAGE);
-	}
-
-	public JButton getShowInputFileChooser() {
-		return showInputFileChooser;
-	}
-
-	public JButton getShowOutputFileChooser() {
-		return showOutputFileChooser;
-	}
-
-	public JButton getShowData() {
-		return showData;
-	}
-
-	public JButton getShowMetrices() {
-		return showMetrices;
-	}
-
-	public JButton getRequestProcess() {
-		return requestProcess;
-	}
-
-	public JList getCnpList() {
-		return cnpList;
-	}
-
-	/**
-	 * Egy felugró ablak formájában megjeleníti a Controller-től kapott kliens adatait.
-	 * @param client
-	 * 							megjelenítendő kliens
-	 * @param values
-	 * 							megjelenítendő klienshez tartozó tranzakcióértékek
-	 */
-	public void showClientData(CnpParts client, BigDecimal[] values) {
-		JDialog modalFrame = new JDialog(ClientView.this, "Information", true);
-		modalFrame.setLayout(new GridLayout(6, 1));
-		modalFrame.setPreferredSize(new Dimension(250, 250));
-
-		modalFrame.add(new JLabel("CNP: " + client.cnp()));
-		modalFrame.add(new JLabel("Sex: " + client.sex()));
-		modalFrame.add(new JLabel("Foreigner: " + client.foreigner()));
-		modalFrame.add(new JLabel("Birth county: " + client.county().getAbrv()));
-		modalFrame.add(new JLabel("Birth date: " + client.birthDate()));
-
-		JScrollPane tmpScrollable = new JScrollPane(new JList(values));
-		modalFrame.add(tmpScrollable);
-
-		modalFrame.pack();
-		modalFrame.setVisible(true);
-	}
-
-	/**
-	 * Megjeleníti a feldolgozási eredményt a kapott JSONObject alapján.
-	 * @param object formázott és értelmezhető JSONObject
-	 */
-	public void showMetricesData(JSONObject object) {
-		JDialog modalFrame = new JDialog(ClientView.this, "Information", true);
-		modalFrame.setLayout(new GridLayout(6, 1));
-		modalFrame.setPreferredSize(new Dimension(350, 250));
-
-		modalFrame.add(new JLabel("No. of payments by minor citizens: " + object.getInt("paymentsByMinor")));
-		modalFrame.add(new JLabel("No. of small payments below 5000 RON: " + object.getInt("smallPayments")));
-		modalFrame.add(new JLabel("No. of big payments above 5000 RON: " + object.getInt("bigPayments")));
-		modalFrame.add(new JLabel("No. of foreign buyers: " + object.getInt("foreigners")));
-		modalFrame.add(new JLabel("Average payment amount: " + object.getBigDecimal("averagePaymentAmount") + " RON"));
-		modalFrame.add(new JLabel("Total amount capital city: " + object.getBigDecimal("totalAmountCapitalCity") + " RON"));
-
-		modalFrame.pack();
-		modalFrame.setVisible(true);
-	}
-
-	public void setController(ClientController controller) {
-		this.controller = controller;
 	}
 
 }

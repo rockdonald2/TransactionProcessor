@@ -82,19 +82,13 @@ public class Client {
 			ClientView.showInformationMessage("Payments successfully processed");
 			Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Payments successfully processed");
 
-			controller.receiveMapOfCustomers(mapOfCustomers);
 		} catch (IOException | ClassNotFoundException e) {
 			ClientView.showErrorMessage("Client error: error while recreating map of customers");
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: error while recreating map of customers");
-
-			controller.setRequestProcessActive(false);
-			controller.setShowMetricesActive(false);
-			controller.setShowDataActive(false);
 		}
 
 		try {
 			out.close();
-			assert inClient != null;
 			inClient.close();
 			s.close();
 		} catch (IOException e) {
