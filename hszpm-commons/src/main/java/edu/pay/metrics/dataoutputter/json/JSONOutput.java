@@ -1,7 +1,7 @@
-package edu.pay.metrics.output;
+package edu.pay.metrics.dataoutputter.json;
 
 import edu.pay.exception.general.metrics.MetricsOutputException;
-import edu.pay.metrics.MetricsOutput;
+import edu.pay.metrics.dataoutputter.MetricsOutput;
 import edu.pay.metrics.PayMetrics;
 import edu.utils.Logger;
 import org.jetbrains.annotations.Nullable;

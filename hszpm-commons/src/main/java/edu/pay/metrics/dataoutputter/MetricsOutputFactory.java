@@ -1,7 +1,7 @@
-package edu.pay.metrics;
+package edu.pay.metrics.dataoutputter;
 
 import edu.pay.exception.general.UnsupportedOutputException;
-import edu.pay.metrics.output.JSONOutput;
+import edu.pay.metrics.dataoutputter.json.JSONOutput;
 
 import java.util.Objects;
 

@@ -11,7 +11,7 @@ import edu.pay.exception.general.UnsupportedOutputException;
 import edu.pay.exception.general.metrics.MetricsException;
 import edu.pay.exception.general.metrics.MetricsOutputException;
 import edu.pay.exception.general.processor.ProcessFailureException;
-import edu.pay.metrics.MetricsOutputFactory;
+import edu.pay.metrics.dataoutputter.MetricsOutputFactory;
 import edu.pay.metrics.PayMetrics;
 import edu.pay.metrics.PayMetricsFactory;
 import edu.pay.metrics.SimplePayMetrics;
