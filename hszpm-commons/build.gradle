@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'checkstyle'
+    id 'pmd'
 }
 
 version 'unspecified'
@@ -21,4 +23,21 @@ dependencies {
 
 test {
     useJUnit()
+}
+
+def configDir = buildscript.sourceFile.parentFile
+
+checkstyle {
+    toolVersion = '9.2'
+    ignoreFailures = true
+    configFile = file("${configDir}/checkstyle.xml")
+}
+
+pmd {
+    toolVersion = '6.41.0'
+    ignoreFailures = true
+    ruleSetFiles = files("${configDir}/pmd-ruleset.xml")
+    ruleSets = []
+    rulesMinimumPriority = 5
+    try { incrementalAnalysis = true } catch(def e) {}
 }

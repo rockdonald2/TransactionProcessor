@@ -1,6 +1,8 @@
 plugins {
     id 'java'
     id 'application'
+    id 'checkstyle'
+    id 'pmd'
 }
 
 version 'unspecified'
@@ -24,4 +26,21 @@ test {
 
 application {
     mainClass = 'edu.network.Server'
+}
+
+def configDir = buildscript.sourceFile.parentFile
+
+checkstyle {
+    toolVersion = '8.26'
+    ignoreFailures = true
+    configFile = file("${configDir}/checkstyle.xml")
+}
+
+pmd {
+    toolVersion = '6.39.0'
+    ignoreFailures = true
+    ruleSetFiles = files("${configDir}/pmd-ruleset.xml")
+    ruleSets = []
+    rulesMinimumPriority = 5
+    try { incrementalAnalysis = true } catch(def e) {}
 }

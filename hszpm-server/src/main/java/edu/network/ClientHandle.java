@@ -40,7 +40,6 @@ public class ClientHandle extends Thread {
 
 		FileInputStream paymentsInputStream = null;
 		try {
-
 			paymentsInputStream = new FileInputStream(in.readLine());
 		} catch (IOException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while finding input tranzactions");
