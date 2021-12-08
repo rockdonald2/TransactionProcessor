@@ -14,7 +14,7 @@ TODO
 * valojaban ezen a ponton tul mar mukodik a parhuzamossag, azonban itt nem
 * */
 
-public class CnpValidator {
+public final class CnpValidator {
 
   private enum CnpPart {
 
@@ -43,6 +43,8 @@ public class CnpValidator {
     }
 
   }
+
+  private CnpValidator() {}
 
   // ! Nem szükséges a szinkronizáltság, thread-local változók jelennek csak meg
   public static CnpParts validate(final String cnp) throws CnpException {
