@@ -18,6 +18,7 @@ public class ClientController {
 		this.view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.view.setVisible(true);
 		this.view.setLocationRelativeTo(null);
+		this.view.pack();
 	}
 
 	public static void main(String[] args) {

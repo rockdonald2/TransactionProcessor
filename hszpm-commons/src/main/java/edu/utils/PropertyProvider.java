@@ -19,6 +19,7 @@ public class PropertyProvider {
 			}
 		} catch (IOException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to access resource.");
+			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 		}
 	}
 

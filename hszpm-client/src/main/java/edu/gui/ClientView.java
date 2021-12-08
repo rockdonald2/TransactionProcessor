@@ -1,13 +1,16 @@
 package edu.gui;
 
 import edu.gui.utils.UIUtils;
+import edu.utils.Logger;
 import edu.utils.PropertyProvider;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 public class ClientView extends JFrame {
 
@@ -32,10 +35,11 @@ public class ClientView extends JFrame {
 		customFont = UIUtils.loadFont();
 
 		this.setTitle("Transaction processor");
+		this.setMinimumSize(new Dimension(ClientController.WIN_SIZE, ClientController.WIN_SIZE));
 
 		contentPanel = new JPanel();
 		contentPanel.setLayout(new GridLayout(3, 1));
-		contentPanel.setPreferredSize(new Dimension(this.getWidth(), this.getHeight()));
+		contentPanel.setPreferredSize(new Dimension(ClientController.WIN_SIZE, ClientController.WIN_SIZE));
 
 		initControlsPanel();
 		contentPanel.add(controlsPanel);
@@ -134,6 +138,11 @@ public class ClientView extends JFrame {
 
 		btnInputFileChooser = new JButton("Select input file");
 		btnInputFileChooser.setFont(customFont.get("13"));
+		try {
+			btnInputFileChooser.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/input.png")))));
+		} catch (IOException | NullPointerException e) {
+			Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for input button.");
+		}
 		btnInputFileChooser.addActionListener(e -> {
 			File selected = showChooser();
 
@@ -150,6 +159,11 @@ public class ClientView extends JFrame {
 
 		btnOutputFileChooser = new JButton("Select output file");
 		btnOutputFileChooser.setFont(customFont.get("13"));
+		try {
+			btnOutputFileChooser.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/output.png")))));
+		} catch (IOException | NullPointerException e) {
+			Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for output button.");
+		}
 		btnOutputFileChooser.addActionListener(e -> {
 			File selected = showChooser();
 
@@ -170,6 +184,11 @@ public class ClientView extends JFrame {
 		GridBagConstraints gbc = new GridBagConstraints();
 		processBtn = new JButton("Process transactions");
 		processBtn.setFont(customFont.get("18"));
+		try {
+			processBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/process.png")))));
+		} catch (IOException | NullPointerException e) {
+			Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for process request button.");
+		}
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
