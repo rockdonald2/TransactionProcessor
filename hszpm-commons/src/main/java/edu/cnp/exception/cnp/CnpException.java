@@ -2,26 +2,26 @@ package edu.cnp.exception.cnp;
 
 public abstract class CnpException extends RuntimeException {
 
-    private final ErrorCode m_code;
+    private final ErrorCode code;
 
     public enum ErrorCode {
 
         INVALID_CNP("INVALID_CNP", 1);
 
-        private final String m_errorName;
-        private final int m_typeNumber;
+        private final String errorName;
+        private final int typeNumber;
 
         ErrorCode(String errorName, int typeNumber) {
-            m_errorName = errorName;
-            m_typeNumber = typeNumber;
+            this.errorName = errorName;
+            this.typeNumber = typeNumber;
         }
 
-        String getErrorName() {
-            return m_errorName;
+        public String getErrorName() {
+            return errorName;
         }
 
-        int getErrorTypeNumber() {
-            return m_typeNumber;
+        public int getErrorTypeNumber() {
+            return typeNumber;
         }
 
     }
@@ -36,7 +36,7 @@ public abstract class CnpException extends RuntimeException {
      */
     public CnpException(String errorMsg, ErrorCode code) {
         super("Error: " + errorMsg);
-        m_code = code;
+        this.code = code;
     }
 
     /**
@@ -47,7 +47,7 @@ public abstract class CnpException extends RuntimeException {
      */
     public CnpException(CnpException e) {
         super(e.getMessage());
-        m_code = e.getCode();
+        code = e.getCode();
     }
 
     /**
@@ -56,7 +56,7 @@ public abstract class CnpException extends RuntimeException {
      * @return ErrorCode
      */
     public ErrorCode getCode() {
-        return m_code;
+        return code;
     }
 
     /**
@@ -65,7 +65,7 @@ public abstract class CnpException extends RuntimeException {
      * @return hibakód típus
      */
     public int getCodeType() {
-        return m_code.getErrorTypeNumber();
+        return code.getErrorTypeNumber();
     }
 
     /**
@@ -73,6 +73,6 @@ public abstract class CnpException extends RuntimeException {
      *
      * @return hibakód megnevezése
      */
-    public String getCodeName() { return m_code.getErrorName(); }
+    public String getCodeName() { return code.getErrorName(); }
 
 }

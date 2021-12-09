@@ -1,5 +1,6 @@
 package edu.pay.error;
 
+import edu.cnp.exception.cnp.CnpException;
 import edu.pay.exception.general.InvalidErrorTypeException;
 import edu.pay.exception.general.MissingErrorArgumentException;
 import edu.pay.exception.pay.PayException;
@@ -44,7 +45,8 @@ public abstract class PayError {
         }
 
         public Builder withType(int type) throws InvalidErrorTypeException {
-            if (Arrays.stream(PayException.ErrorCode.values()).noneMatch(v -> v.getErrorTypeNumber() == type)) {
+            if (Arrays.stream(PayException.ErrorCode.values()).noneMatch(v -> v.getErrorTypeNumber() == type)
+                    && Arrays.stream(CnpException.ErrorCode.values()).noneMatch(v -> v.getErrorTypeNumber() == type)) {
                 throw new InvalidErrorTypeException("Invalid error type.");
             }
 

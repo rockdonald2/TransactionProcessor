@@ -44,7 +44,7 @@ public class ClientHandle extends Thread {
 				paymentsInputStream = new FileInputStream(in.readLine());
 			} catch (IOException e) {
 				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while finding input tranzactions");
-				throw new SocketFailureException("Error while finding input tranzactions.");
+				throw new SocketFailureException("Error while finding input transactions.");
 			}
 
 			FileOutputStream paymentsOutputStream = null;
