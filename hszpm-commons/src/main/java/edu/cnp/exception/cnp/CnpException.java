@@ -35,7 +35,7 @@ public abstract class CnpException extends RuntimeException {
      *              hozzátartozó hibakód
      */
     public CnpException(String errorMsg, ErrorCode code) {
-        super("Error: " + errorMsg);
+        super(errorMsg);
         this.code = code;
     }
 

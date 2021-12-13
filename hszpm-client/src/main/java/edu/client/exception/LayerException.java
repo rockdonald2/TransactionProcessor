@@ -1,4 +1,4 @@
-package edu.exception;
+package edu.client.exception;
 
 public class LayerException extends ClientException {
 

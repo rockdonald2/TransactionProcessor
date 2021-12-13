@@ -1,8 +1,8 @@
-package edu.gui;
+package edu.client.gui;
 
-import edu.exception.ClientException;
-import edu.exception.RequestProcessFailureException;
-import edu.network.Client;
+import edu.client.exception.ClientException;
+import edu.client.exception.RequestProcessFailureException;
+import edu.client.network.Client;
 import edu.utils.Logger;
 import edu.utils.PropertyProvider;
 
@@ -35,7 +35,7 @@ public class ClientController {
   }
 
   public void updateInputFormat(String path) {
-    PropertyProvider.setProperty("input.format", path);
+    PropertyProvider.setClientProperty("input.format", path, true);
   }
 
   public void updateInputPath(JButton btn) {
@@ -45,7 +45,7 @@ public class ClientController {
   }
 
   public void updateOutputFormat(String path) {
-    PropertyProvider.setProperty("output.format", path);
+    PropertyProvider.setClientProperty("output.format", path, true);
   }
 
   public void updateOutputPath(JButton btn) {
@@ -55,7 +55,7 @@ public class ClientController {
   }
 
   public void updateMetricsType(String type) {
-    PropertyProvider.setProperty("processor.type", type);
+    PropertyProvider.setClientProperty("processor.type", type, true);
   }
 
   public void requestProcess() throws RequestProcessFailureException {
@@ -73,7 +73,7 @@ public class ClientController {
     }
 
     try {
-      new Client(this).requestProcess(input.getAbsolutePath(), output.getAbsolutePath());
+      SwingUtilities.invokeLater(() -> new Client(ClientController.this).requestProcess(input.getAbsolutePath(), output.getAbsolutePath()));
     } catch (ClientException e) {
       throw new RequestProcessFailureException(e.getMessage());
     }

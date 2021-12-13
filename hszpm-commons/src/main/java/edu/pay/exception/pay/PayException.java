@@ -36,7 +36,7 @@ public abstract class PayException extends RuntimeException {
      *              hozzátartozó hibakód
      */
     public PayException(String errorMsg, ErrorCode code) {
-        super("Error: " + errorMsg);
+        super(errorMsg);
         this.code = code;
     }
 

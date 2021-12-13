@@ -1,31 +1,28 @@
 package edu.pay.metrics.dataoutputter.json;
 
+import edu.network.FileTransfer;
 import edu.pay.exception.general.metrics.MetricsOutputException;
 import edu.pay.metrics.dataoutputter.MetricsOutput;
 import edu.pay.metrics.PayMetrics;
 import edu.utils.Logger;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Objects;
+import java.io.ObjectOutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class JSONOutput implements MetricsOutput {
 
 	/**
 	 * Kiírja formázott JSON-ként az adott PayMetrics instancia állapotát a megadott File-ba.
-	 * @param metrics
-	 * 								mutatók
-	 * @param file
-	 *                              kimeneti File adatfolyama
-	 */
+   * @param metrics
+   * 								mutatók
+   * @param os
+   */
 	@Override
-	public void writeToFile(PayMetrics metrics, @Nullable FileOutputStream file) throws MetricsOutputException {
-		if (Objects.isNull(file)) return;
-
+	public void writeToFile(PayMetrics metrics, @NotNull ObjectOutputStream os) throws MetricsOutputException {
 		var output = new JSONObject();
 		var metrices = metrics.metrices();
 
@@ -39,11 +36,10 @@ public class JSONOutput implements MetricsOutput {
 		}
 		output.put("errors", errs);
 
-		var o = new OutputStreamWriter(file);
 		try {
-			o.write(output.toString());
-			o.flush();
-			o.close();
+			FileTransfer out = new FileTransfer(output.toString().getBytes(StandardCharsets.UTF_8));
+			os.writeObject(out);
+			os.flush();
 		} catch (IOException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 			throw new MetricsOutputException();

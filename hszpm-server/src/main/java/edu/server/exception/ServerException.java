@@ -1,4 +1,4 @@
-package edu.network.exceptions;
+package edu.server.exception;
 
 public abstract class ServerException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package edu.gui;
+package edu.client.gui;
 
 import java.io.File;
 

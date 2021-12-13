@@ -1,4 +1,4 @@
-package edu.exception;
+package edu.client.exception;
 
 public abstract class ClientException extends RuntimeException {
 

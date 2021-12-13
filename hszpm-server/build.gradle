@@ -25,7 +25,7 @@ test {
 }
 
 application {
-    mainClass = 'edu.network.Server'
+    mainClass = 'edu.server.Main'
 }
 
 def configDir = buildscript.sourceFile.parentFile

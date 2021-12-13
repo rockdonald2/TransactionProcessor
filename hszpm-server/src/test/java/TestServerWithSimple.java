@@ -1,5 +1,8 @@
 import edu.cnp.parts.CnpParts;
-import edu.network.ClientHandle;
+import edu.server.Server;
+import edu.server.ServerFactory;
+import edu.server.network.NetworkClientHandle;
+import edu.utils.PropertyProvider;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,20 +26,21 @@ public class TestServerWithSimple {
 
 	@BeforeClass
 	public static void startServer() throws IOException, InterruptedException, ClassNotFoundException {
-		server = new ServerSocket(11111);
-		Socket s = new Socket("localhost", 11111);
+		server = new ServerSocket(Integer.parseInt(PropertyProvider.getServerProperty("port")));
+		Socket s = new Socket("localhost", Integer.parseInt(PropertyProvider.getServerProperty("port")));
 
 		final ExecutorService exService = Executors.newSingleThreadExecutor();
 		exService.execute(() -> {
 			try {
-				new ClientHandle(server.accept()).start();
+				new NetworkClientHandle(server.accept()).start();
 			} catch (IOException e) {
 				System.err.println(e.getMessage());
 			}
 		});
 
 		PrintWriter out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
-		// TODO: függetleníteni a beállított input és output formátumtól is
+		PropertyProvider.setClientProperty("input.format", "csv", false);
+		PropertyProvider.setClientProperty("output.format", "json", false);
 		out.println(TestServerWithSimple.class.getResource("testData.csv").getPath());
 		out.println(TestServerWithSimple.class.getResource("testResult.json").getPath());
 		out.flush();

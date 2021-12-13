@@ -1,4 +1,4 @@
-package edu.network.exceptions;
+package edu.server.exception;
 
 public class SocketFailureException extends ServerException {
 

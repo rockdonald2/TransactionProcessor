@@ -5,37 +5,60 @@ import java.util.Properties;
 
 public class PropertyProvider {
 
-	private static final Properties properties;
+  private static final Properties serverProperties;
+  private static final Properties clientProperties;
 
-	static {
-		properties = new Properties();
-		try (InputStream is = PropertyProvider.class.getResourceAsStream("/properties.properties")) {
-			if (is != null) {
-				properties.load(is);
+  static {
+    clientProperties = new Properties();
+    serverProperties = new Properties();
 
-				if (new File(properties.getProperty("config.file")).exists()) {
-					properties.load(new FileInputStream(properties.getProperty("config.file")));
-				}
-			}
-		} catch (IOException e) {
-			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to access resource.");
-			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
-		}
-	}
+    try (InputStream is = PropertyProvider.class.getResourceAsStream("/server_properties.properties")) {
+      if (is != null) {
+        serverProperties.load(is);
+      } else {
+        Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Stream of resource is null.");
+      }
+    } catch (IOException e) {
+      Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to access resource.");
+      Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
+    }
 
-	public static synchronized String getProperty(String key) {
-		return properties.getProperty(key);
-	}
-	public static synchronized void setProperty(String key, String value) {
-		properties.setProperty(key, value);
+    try (InputStream is = PropertyProvider.class.getResourceAsStream("/client_properties.properties")) {
+      if (is != null) {
+        clientProperties.load(is);
 
-		try (OutputStream out = new FileOutputStream(properties.getProperty("config.file"))) {
-			properties.store(out, null);
-		} catch (IOException e) {
-			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to write resource.");
-			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
-		}
-	}
+        if (new File(clientProperties.getProperty("config.file")).exists()) {
+          clientProperties.load(new FileInputStream(clientProperties.getProperty("config.file")));
+        }
+      } else {
+        Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Stream of resource is null.");
+      }
+    } catch (IOException e) {
+      Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to access resource.");
+      Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
+    }
+  }
+
+  public static synchronized String getClientProperty(String key) {
+    return clientProperties.getProperty(key);
+  }
+
+  public static String getServerProperty(String key) {
+    return serverProperties.getProperty(key);
+  }
+
+  public static synchronized void setClientProperty(String key, String value, boolean save) {
+    clientProperties.setProperty(key, value);
+
+    if (save) {
+      try (OutputStream out = new FileOutputStream(clientProperties.getProperty("config.file"))) {
+        clientProperties.store(out, null);
+      } catch (IOException e) {
+        Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to write resource.");
+        Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
+      }
+    }
+  }
 
 }
 

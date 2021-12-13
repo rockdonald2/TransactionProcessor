@@ -1,4 +1,4 @@
-package edu.gui.utils;
+package edu.client.gui.utils;
 
 import edu.utils.Logger;
 

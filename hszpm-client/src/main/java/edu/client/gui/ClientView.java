@@ -1,7 +1,7 @@
-package edu.gui;
+package edu.client.gui;
 
-import edu.exception.RequestProcessFailureException;
-import edu.gui.utils.UIUtils;
+import edu.client.exception.RequestProcessFailureException;
+import edu.client.gui.utils.UIUtils;
 import edu.utils.Logger;
 import edu.utils.PropertyProvider;
 
@@ -70,7 +70,7 @@ public class ClientView extends JFrame {
     JLabel inputLabel = new JLabel("Input file format");
     inputLabel.setFont(customFont.get("14"));
     inputFormatsList = new JComboBox<>(new String[]{"csv"});
-    inputFormatsList.setSelectedItem(PropertyProvider.getProperty("input.format"));
+    inputFormatsList.setSelectedItem(PropertyProvider.getClientProperty("input.format"));
     inputFormatsList.setFont(customFont.get("13"));
     inputFormatsList.addItemListener(e -> controller.updateInputFormat(String.valueOf(inputFormatsList.getSelectedItem())));
 
@@ -89,7 +89,7 @@ public class ClientView extends JFrame {
     JLabel outputLabel = new JLabel("Output file format");
     outputLabel.setFont(customFont.get("14"));
     outputFormatsList = new JComboBox<>(new String[]{"json"});
-    outputFormatsList.setSelectedItem(PropertyProvider.getProperty("output.format"));
+    outputFormatsList.setSelectedItem(PropertyProvider.getClientProperty("output.format"));
     outputFormatsList.setFont(customFont.get("13"));
     outputFormatsList.addItemListener(e -> controller.updateOutputFormat(String.valueOf(outputFormatsList.getSelectedItem())));
 
@@ -109,7 +109,7 @@ public class ClientView extends JFrame {
     typesLabel.setFont(customFont.get("14"));
     metricsTypesList = new JComboBox<>(new String[]{"simple"});
     metricsTypesList.setFont(customFont.get("13"));
-    metricsTypesList.setSelectedItem(PropertyProvider.getProperty("processor.type"));
+    metricsTypesList.setSelectedItem(PropertyProvider.getClientProperty("processor.type"));
     metricsTypesList.addItemListener(e -> controller.updateMetricsType(String.valueOf(metricsTypesList.getSelectedItem())));
 
     gbc.gridx = 0;

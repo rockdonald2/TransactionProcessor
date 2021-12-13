@@ -1,25 +1,25 @@
-package edu.network;
+package edu.server.network;
 
-import edu.network.exceptions.SocketFailureException;
+import edu.server.exception.SocketFailureException;
 import edu.utils.Logger;
 import edu.utils.PropertyProvider;
 
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ClientHandlePool {
+public class NetworkClientHandlePool {
 
-  private static ClientHandlePool instance;
-  private static final int POOL_SIZE = Integer.parseInt(PropertyProvider.getProperty("pool.size"));
+  private static NetworkClientHandlePool instance;
+  private static final int POOL_SIZE = Integer.parseInt(PropertyProvider.getServerProperty("pool.size"));
   private final AtomicInteger current;
 
-  private ClientHandlePool() {
+  private NetworkClientHandlePool() {
     current = new AtomicInteger(0);
   }
 
-  public static synchronized ClientHandlePool getInstance() {
+  public static synchronized NetworkClientHandlePool getInstance() {
     if (instance == null) {
-      instance = new ClientHandlePool();
+      instance = new NetworkClientHandlePool();
     }
 
     return instance;
@@ -49,7 +49,7 @@ public class ClientHandlePool {
     }
 
     incrementClients();
-    (new ClientHandle(client)).start();
+    (new NetworkClientHandle(client)).start();
   }
 
 }
