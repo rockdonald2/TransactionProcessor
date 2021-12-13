@@ -1,4 +1,5 @@
 import edu.cnp.parts.CnpParts;
+import edu.network.FileTransfer;
 import edu.server.Server;
 import edu.server.ServerFactory;
 import edu.server.network.NetworkClientHandle;
@@ -13,6 +14,8 @@ import java.math.BigDecimal;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -38,16 +41,20 @@ public class TestServerWithSimple {
 			}
 		});
 
-		PrintWriter out = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
+		ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
+		PropertyProvider.setClientProperty("processor.type", "simple", false);
 		PropertyProvider.setClientProperty("input.format", "csv", false);
 		PropertyProvider.setClientProperty("output.format", "json", false);
-		out.println(TestServerWithSimple.class.getResource("testData.csv").getPath());
-		out.println(TestServerWithSimple.class.getResource("testResult.json").getPath());
+		File input = new File(TestServerWithSimple.class.getResource("testData.csv").getPath());
+		out.writeObject(new FileTransfer(Files.readAllBytes(Path.of(input.getPath()))));
 		out.flush();
 
+		File output = new File(TestServerWithSimple.class.getResource("testResult.json").getPath());
 		ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+		FileTransfer inFt = (FileTransfer) in.readObject();
+		Files.write(Path.of(output.getPath()), inFt.getData());
 		Map<CnpParts, List<BigDecimal>> customers = (Map<CnpParts, List<BigDecimal>>) in.readObject();
-		output = new JSONObject(IOUtils.toString(new FileInputStream(TestServerWithSimple.class.getResource("testResult.json").getPath()), StandardCharsets.UTF_8));
+		TestServerWithSimple.output = new JSONObject(IOUtils.toString(new FileInputStream(output), StandardCharsets.UTF_8));
 
 		s.close();
 		out.close();
