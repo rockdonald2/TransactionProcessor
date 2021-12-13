@@ -1,6 +1,7 @@
 package edu.client.gui;
 
-import edu.client.exception.ClientException;
+import edu.client.gui.utils.LoaderPanel;
+import edu.network.exception.ClientException;
 import edu.client.exception.RequestProcessFailureException;
 import edu.client.network.Client;
 import edu.utils.Logger;
@@ -72,11 +73,35 @@ public class ClientController {
       throw new RequestProcessFailureException("Output file not specified.");
     }
 
-    try {
-      SwingUtilities.invokeLater(() -> new Client(ClientController.this).requestProcess(input.getAbsolutePath(), output.getAbsolutePath()));
-    } catch (ClientException e) {
-      throw new RequestProcessFailureException(e.getMessage());
-    }
+    SwingWorker<Object, Object> loadingProcess = new SwingWorker<>() {
+      @Override
+      protected Object doInBackground() throws Exception {
+        LoaderPanel.getInstance().showLoader();
+        view.toggleProcessBtn();
+        return null;
+      }
+    };
+    loadingProcess.execute();
+
+    SwingWorker<Object, Object> longProcess = new SwingWorker<>() {
+      @Override
+      protected Object doInBackground() throws Exception {
+        try {
+          new Client(ClientController.this).requestProcess(input.getAbsolutePath(), output.getAbsolutePath());
+        } catch (ClientException e) {
+          ClientView.showErrorMessage(e.getMessage());
+        }
+
+        return null;
+      }
+
+      @Override
+      protected void done() {
+        LoaderPanel.getInstance().hideLoader();
+        view.toggleProcessBtn();
+      }
+    };
+    longProcess.execute();
   }
 
   public static void main(String[] args) {

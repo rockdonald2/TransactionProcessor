@@ -3,8 +3,7 @@ package edu.server.network;
 import edu.cnp.parts.CnpParts;
 import edu.network.FileTransfer;
 import edu.server.ClientHandle;
-import edu.server.exception.IncompatibleFileTypeException;
-import edu.server.exception.ServerException;
+import edu.network.exception.ServerException;
 import edu.server.exception.SocketFailureException;
 import edu.pay.exception.general.GeneralException;
 import edu.pay.processor.PayProcessor;
@@ -46,6 +45,7 @@ public class NetworkClientHandle extends Thread implements ClientHandle {
       try {
         inFt = (FileTransfer) in.readObject();
       } catch (Exception e) {
+        Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
         throw new SocketFailureException("Error while recreating input data.");
       }
 
@@ -64,6 +64,11 @@ public class NetworkClientHandle extends Thread implements ClientHandle {
       } catch (GeneralException e) {
         Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while processing payments");
         Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
+        try {
+          out.writeObject(e);
+        } catch (IOException ex) {
+          Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to write exception to client.");
+        }
         throw new SocketFailureException("Error while processing payments.");
       }
 
@@ -76,7 +81,13 @@ public class NetworkClientHandle extends Thread implements ClientHandle {
       }
     } catch (ServerException e) {
       Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
-      throw e;
+      try {
+        if (out != null) {
+          out.writeObject(e);
+        }
+      } catch (IOException ex) {
+        Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to write exception to client.");
+      }
     } finally {
       try {
         if (in != null) {

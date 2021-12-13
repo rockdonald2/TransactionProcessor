@@ -175,13 +175,7 @@ public class ClientView extends JFrame {
       Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for process request button.");
     }
 
-    processBtn.addActionListener(e -> {
-      try {
-        controller.requestProcess();
-      } catch (RequestProcessFailureException ex) {
-        ClientView.this.showErrorMessage(ex.getMessage());
-      }
-    });
+    processBtn.addActionListener(e -> controller.requestProcess());
 
     gbc.gridx = 0;
     gbc.gridy = 0;
@@ -208,16 +202,20 @@ public class ClientView extends JFrame {
     return null;
   }
 
-  public void showErrorMessage(String message) {
-    JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+  public static void showErrorMessage(String message) {
+    JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
   }
 
-  public void showInformationMessage(String message) {
-    JOptionPane.showMessageDialog(this, message, "Information", JOptionPane.INFORMATION_MESSAGE);
+  public static void showInformationMessage(String message) {
+    JOptionPane.showMessageDialog(null, message, "Information", JOptionPane.INFORMATION_MESSAGE);
   }
 
   public void updateBtnLabel(JButton btn, String text) {
     btn.setText(text);
+  }
+
+  public void toggleProcessBtn() {
+    this.processBtn.setEnabled(!this.processBtn.isEnabled());
   }
 
 }
