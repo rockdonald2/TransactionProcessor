@@ -8,13 +8,19 @@ import edu.client.exception.RequestProcessFailureException;
 import edu.client.network.Client;
 import edu.utils.Logger;
 import edu.utils.PropertyProvider;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.CaseUtils;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.json.JSONObject;
 
 import javax.swing.*;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClientController {
 
@@ -68,6 +74,14 @@ public class ClientController {
         });
     }
 
+    public void setCustomers(Map<CnpParts, List<BigDecimal>> mapOfCustomers) {
+        model.setCustomers(mapOfCustomers);
+    }
+
+    public void setMetrices(JSONObject metrices) {
+        model.setMetrices(metrices);
+    }
+
     public void createTableOf(String of) {
         switch (of) {
             case "metrices" -> {
@@ -101,12 +115,50 @@ public class ClientController {
         }
     }
 
-    public void setCustomers(Map<CnpParts, List<BigDecimal>> mapOfCustomers) {
-        model.setCustomers(mapOfCustomers);
-    }
+    public void createChartOf(String selectedItem) {
+        SwingUtilities.invokeLater(() -> {
+            var customers = model.getCustomers();
 
-    public void setMetrices(JSONObject metrices) {
-        model.setMetrices(metrices);
+            Set<String> groups = new HashSet<>();
+            customers.keySet().forEach(customer -> {
+                try {
+                    groups.add(CnpParts.class.getMethod(
+                                    StringUtils.replace(CaseUtils.toCamelCase(selectedItem, false), " ", ""))
+                            .invoke(customer).toString());
+                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
+                }
+            });
+
+            Map<String, List<BigDecimal>> valuesByGroups = new HashMap<>();
+            groups.forEach(group -> {
+                valuesByGroups.put(group,
+                        customers.keySet().stream().filter(customer ->
+                        {
+                            try {
+                                return CnpParts.class.getMethod(
+                                                StringUtils.replace(CaseUtils.toCamelCase(selectedItem, false), " ", ""))
+                                        .invoke(customer).toString().equals(group);
+                            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                                Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
+                                return false;
+                            }
+                        }).flatMap(customer -> customers.get(customer).stream()).collect(Collectors.toList())
+                );
+            });
+
+            var dataSet = new DefaultCategoryDataset();
+            groups.forEach(group -> {
+                dataSet.setValue(valuesByGroups.get(group).stream()
+                                .mapToDouble(BigDecimal::doubleValue).average().orElse(0.0)
+                        , "Average by group", group);
+            });
+
+            var chart = ChartFactory.createBarChart("Average by " + selectedItem, "",
+                    "Average by group", dataSet, PlotOrientation.VERTICAL, false, true, false);
+            chart.setAntiAlias(true);
+            new ClientChartView(chart);
+        });
     }
 
     public void requestProcess() throws RequestProcessFailureException {
@@ -159,6 +211,4 @@ public class ClientController {
     public static void main(String[] args) {
         new ClientController();
     }
-
-
 }
