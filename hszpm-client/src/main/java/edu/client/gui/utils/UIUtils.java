@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UIUtils {
+public final class UIUtils {
 
   public static void initLookAndFeel() {
     for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -45,6 +45,12 @@ public class UIUtils {
     }
 
     return Collections.emptyMap();
+  }
+
+  public static void fillWithBlankLabels(JPanel panel, int times) {
+    for (int i = 0; i < times; i++) {
+      panel.add(new JLabel());
+    }
   }
 
 }

@@ -1,6 +1,5 @@
 package edu.client.gui;
 
-import edu.client.exception.RequestProcessFailureException;
 import edu.client.gui.utils.UIUtils;
 import edu.utils.Logger;
 import edu.utils.PropertyProvider;
@@ -13,10 +12,11 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
-public class ClientView extends JFrame {
+public class ClientMainView extends JFrame {
 
   private final Map<String, Font> customFont; // custom font különböző méretekben
-  private final JPanel contentPanel; // főpanel
+
+  private JPanel contentPanelMainView; // főpanel
   private JPanel controlsPanel; // felső vezérlőpanel
   private JComboBox<String> inputFormatsList; // input formátumokat tartalmazó dropdown
   private JComboBox<String> outputFormatsList; // output formátumokat
@@ -27,9 +27,14 @@ public class ClientView extends JFrame {
   private JPanel processPanel; // feldolgozást elindító gombot tartalmazó panel
   private JButton processBtn; // feldolgozást elindító gomb
 
+  private JPanel contentPanelSecondaryView;
+  private JButton backBtn;
+  private JButton metricesBtn;
+  private JButton statisticsBtn;
+
   private ClientController controller;
 
-  public ClientView(ClientController controller) {
+  public ClientMainView(ClientController controller) {
     this.controller = controller;
 
     UIUtils.initLookAndFeel();
@@ -38,20 +43,38 @@ public class ClientView extends JFrame {
     this.setTitle("Transaction processor");
     this.setMinimumSize(new Dimension(ClientController.WIN_SIZE, ClientController.WIN_SIZE));
 
-    contentPanel = new JPanel();
-    contentPanel.setLayout(new GridLayout(3, 1));
-    contentPanel.setPreferredSize(new Dimension(ClientController.WIN_SIZE, ClientController.WIN_SIZE));
+    initMainPanel();
+    initSecondaryPanel();
+
+    // main view
+    this.setContentPane(contentPanelMainView);
+    this.setSize(ClientController.WIN_SIZE, ClientController.WIN_SIZE);
+    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    this.setVisible(true);
+    this.setLocationRelativeTo(null);
+  }
+
+  public JPanel getMainView() {
+    return contentPanelMainView;
+  }
+
+  public JPanel getSecondaryView() {
+    return contentPanelSecondaryView;
+  }
+
+  private void initMainPanel() {
+    contentPanelMainView = new JPanel();
+    contentPanelMainView.setLayout(new GridLayout(3, 1));
+    contentPanelMainView.setPreferredSize(new Dimension(ClientController.WIN_SIZE, ClientController.WIN_SIZE));
 
     initControlsPanel();
-    contentPanel.add(controlsPanel);
+    contentPanelMainView.add(controlsPanel);
 
     initChooserPanel();
-    contentPanel.add(chooserPanel);
+    contentPanelMainView.add(chooserPanel);
 
     initProcessBtn();
-    contentPanel.add(processPanel);
-
-    this.setContentPane(contentPanel);
+    contentPanelMainView.add(processPanel);
   }
 
   private void initControlsPanel() {
@@ -175,7 +198,10 @@ public class ClientView extends JFrame {
       Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for process request button.");
     }
 
-    processBtn.addActionListener(e -> controller.requestProcess());
+    processBtn.addActionListener(e -> {
+      controller.requestProcess();
+
+    });
 
     gbc.gridx = 0;
     gbc.gridy = 0;
@@ -184,6 +210,58 @@ public class ClientView extends JFrame {
     gbc.weighty = 1;
     gbc.insets = new Insets(5, 5, 5, 5);
     processPanel.add(processBtn, gbc);
+  }
+
+  private void initSecondaryPanel() {
+    contentPanelSecondaryView = new JPanel();
+    contentPanelSecondaryView.setLayout(new GridLayout(3, 1));
+    contentPanelSecondaryView.setPreferredSize(new Dimension(ClientController.WIN_SIZE, ClientController.WIN_SIZE));
+
+    initBackPanel();
+    initShowMetrices();
+    initShowStatistics();
+  }
+
+  private void initBackPanel() {
+    JPanel backPanel = new JPanel(new GridLayout(2, 3));
+    backBtn = new JButton("Back");
+    backBtn.setFont(customFont.get("14"));
+    try {
+      backBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/left-arrow.png")))));
+    } catch (IOException | NullPointerException e) {
+      Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for back button.");
+    }
+    backBtn.addActionListener((e) -> controller.setCurrentView(contentPanelMainView));
+
+    backPanel.add(backBtn);
+    UIUtils.fillWithBlankLabels(backPanel, 5);
+    contentPanelSecondaryView.add(backPanel);
+  }
+
+  private void initShowMetrices() {
+    metricesBtn = new JButton("Show metrices");
+    metricesBtn.setFont(customFont.get("14"));
+    try {
+      metricesBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/table.png")))));
+    } catch (IOException | NullPointerException e) {
+      Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for show metrices button.");
+    }
+    metricesBtn.addActionListener((e) -> controller.createTableOf("metrices"));
+
+    contentPanelSecondaryView.add(metricesBtn);
+  }
+
+  private void initShowStatistics() {
+    statisticsBtn = new JButton("Show customers' statistics");
+    statisticsBtn.setFont(customFont.get("14"));
+    try {
+      statisticsBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/table.png")))));
+    } catch (IOException | NullPointerException e) {
+      Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for show statistics button.");
+    }
+    statisticsBtn.addActionListener((e) -> controller.createTableOf("statistics"));
+
+    contentPanelSecondaryView.add(statisticsBtn);
   }
 
   /**

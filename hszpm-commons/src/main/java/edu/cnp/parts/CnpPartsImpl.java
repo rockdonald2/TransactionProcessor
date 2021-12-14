@@ -62,6 +62,11 @@ class CnpPartsImpl extends CnpParts implements Serializable {
 	@Override
 	public String cnp() { return cnp; }
 
+	@Override
+	public String[] toStringParts() {
+		return new String[] {String.valueOf(this.sex), String.valueOf(this.isForeigner), String.valueOf(this.county), String.valueOf(this.birthDate), String.valueOf(this.orderNumber), String.valueOf(cnp)};
+	}
+
 	/**
 	 * Vizualizálja a személy CNP-jét.
 	 *

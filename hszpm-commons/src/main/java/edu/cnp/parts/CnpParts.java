@@ -32,6 +32,12 @@ public abstract class CnpParts implements Serializable {
     public abstract Short orderNumber();
 
     public abstract String cnp();
+    
+    public static String[] getParts() {
+        return new String[] { "Sex", "Foreigner", "County", "Birth Date", "Order Number", "CNP" };
+    }
+
+    public abstract String[] toStringParts();
 
     public static class Builder {
 
