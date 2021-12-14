@@ -1,5 +1,7 @@
 package edu.utils;
 
+import edu.utils.exception.PropertyProviderException;
+
 import java.io.*;
 import java.util.Properties;
 
@@ -47,15 +49,16 @@ public class PropertyProvider {
     return serverProperties.getProperty(key);
   }
 
-  public static synchronized void setClientProperty(String key, String value, boolean save) {
+  public static synchronized void setClientProperty(String key, String value, boolean save) throws PropertyProviderException {
     clientProperties.setProperty(key, value);
 
     if (save) {
-      try (OutputStream out = new FileOutputStream(clientProperties.getProperty("config.file"))) {
+      try (OutputStream out = new FileOutputStream(clientProperties.getProperty("config.file"), false)) {
         clientProperties.store(out, null);
       } catch (IOException e) {
         Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to write resource.");
         Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
+        throw new PropertyProviderException();
       }
     }
   }

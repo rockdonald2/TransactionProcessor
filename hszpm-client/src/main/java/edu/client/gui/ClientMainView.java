@@ -1,5 +1,6 @@
 package edu.client.gui;
 
+import edu.client.exception.RequestProcessFailureException;
 import edu.client.gui.utils.UIUtils;
 import edu.cnp.parts.CnpParts;
 import edu.utils.Logger;
@@ -203,8 +204,11 @@ public class ClientMainView extends JFrame {
         }
 
         processBtn.addActionListener(e -> {
-            controller.requestProcess();
-
+            try {
+                controller.requestProcess();
+            } catch (RequestProcessFailureException ex) {
+                showErrorMessage(ex.getMessage());
+            }
         });
 
         gbc.gridx = 0;
@@ -301,8 +305,20 @@ public class ClientMainView extends JFrame {
      *
      * @return kijelölt állomány vagy null, ha nem választott ki semmit
      */
-    public File showChooser() {
+    public File showFileChooser() {
         JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(this);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            return fileChooser.getSelectedFile();
+        }
+
+        return null;
+    }
+
+    public File showDirectoryChooser() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int returnValue = fileChooser.showOpenDialog(this);
 
         if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -327,5 +343,4 @@ public class ClientMainView extends JFrame {
     public void toggleProcessBtn() {
         this.processBtn.setEnabled(!this.processBtn.isEnabled());
     }
-
 }

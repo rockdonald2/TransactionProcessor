@@ -6,8 +6,10 @@ import edu.cnp.parts.CnpParts;
 import edu.network.exception.ClientException;
 import edu.client.exception.RequestProcessFailureException;
 import edu.client.network.Client;
+import edu.pay.exception.general.processor.ProcessFailureException;
 import edu.utils.Logger;
 import edu.utils.PropertyProvider;
+import edu.utils.exception.PropertyProviderException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
 import org.jfree.chart.ChartFactory;
@@ -32,6 +34,26 @@ public class ClientController {
     public ClientController() {
         this.model = new ClientModel();
         this.view = new ClientMainView(this);
+        checkConfigSetup();
+    }
+
+    private void checkConfigSetup() {
+        JOptionPane.showMessageDialog(null, "Select a directory for saving configuration.");
+        var configPath = PropertyProvider.getClientProperty("config.file");
+
+        while (configPath == null || "".equals(configPath)) {
+            var tmp = view.showDirectoryChooser();
+            if (tmp != null) {
+                configPath = tmp.getAbsolutePath();
+            }
+        }
+
+        try {
+            PropertyProvider.setClientProperty("config.file",
+                    StringUtils.replace(configPath, "\\", "\\\\") + "config.properties", true);
+        } catch (PropertyProviderException e) {
+            ClientMainView.showErrorMessage(e.getMessage());
+        }
     }
 
     private void updateBtnLabel(JButton btn, File selected) {
@@ -47,7 +69,7 @@ public class ClientController {
     }
 
     public void updateInputPath(JButton btn) {
-        File selected = view.showChooser();
+        File selected = view.showFileChooser();
         updateBtnLabel(btn, selected);
         model.setInput(selected);
     }
@@ -57,7 +79,7 @@ public class ClientController {
     }
 
     public void updateOutputPath(JButton btn) {
-        File selected = view.showChooser();
+        File selected = view.showFileChooser();
         updateBtnLabel(btn, selected);
         model.setOutput(selected);
     }
@@ -88,7 +110,7 @@ public class ClientController {
                 var rawData = model.getMetrices();
                 var rawDataColumns = rawData.keySet();
                 rawDataColumns.remove("errors");
-                String[] columns = rawDataColumns.toArray(new String[] {});
+                String[] columns = rawDataColumns.toArray(new String[]{});
                 String[][] data = new String[1][columns.length];
 
                 int i = 0;
