@@ -53,6 +53,7 @@ public class NetworkClientHandle extends Thread implements ClientHandle {
       try {
         out = new ObjectOutputStream(client.getOutputStream());
       } catch (IOException e) {
+        Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
         throw new SocketFailureException("Error while accessing client's output stream.");
       }
 

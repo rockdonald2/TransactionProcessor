@@ -57,22 +57,27 @@ public class Client {
 			File output = new File(outputPath);
 
 			if (!input.exists()) {
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: non-existing input file.");
 				throw new LayerException("Non-existing input file.");
 			}
 
 			if (!input.getName().contains(PropertyProvider.getClientProperty("input.format"))) {
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: incompatible type of input file with currently set input format.");
 				throw new LayerException("Incompatible type of input file with currently set input format.");
 			}
 
 			if (!output.exists()) {
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: non-existing output file.");
 				throw new LayerException("Non-existing output file.");
 			}
 
 			if (!output.canWrite()) {
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: cannot write to output file.");
 				throw new LayerException("Cannot write to output file.");
 			}
 
 			if (!output.getName().contains(PropertyProvider.getClientProperty("output.format"))) {
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: incompatible type of output file with currently set input format.");
 				throw new LayerException("Incompatible type of input file with currently set input format.");
 			}
 
@@ -80,6 +85,7 @@ public class Client {
 			try {
 				inputByteContent = Files.readAllBytes(Path.of(input.getPath()));
 			} catch (IOException e) {
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 				throw new LayerException("Error while opening input file.");
 			}
 
@@ -88,12 +94,14 @@ public class Client {
 				out.writeObject(inFt);
 				out.flush();
 			} catch (IOException e) {
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 				throw new LayerException("Error while sending data to server.");
 			}
 
 			try {
 				in = new ObjectInputStream(s.getInputStream());
 			} catch (IOException e) {
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 				throw new LayerException("Error while reading server answer.");
 			}
 
@@ -102,6 +110,7 @@ public class Client {
 			try {
 				answer = in.readObject();
 			} catch (Exception e) {
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 				throw new LayerException("Error while recreating output file.");
 			}
 
@@ -111,6 +120,7 @@ public class Client {
 			} catch (ClassCastException e) {
 				wasException = true;
 				Exception ex = (Exception) answer;
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, ex.getMessage());
 				throw new LayerException(ex.getMessage());
 			}
 
@@ -119,6 +129,7 @@ public class Client {
 				// ? de megtörténhet, hogy valamilyen kivétel jön vissza
 				Files.write(Path.of(output.getPath()), outFt.getData());
 			} catch (IOException e) {
+				Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 				throw new LayerException("Error while writing to output file.");
 			}
 
