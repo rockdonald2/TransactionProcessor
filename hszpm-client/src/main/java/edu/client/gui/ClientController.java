@@ -6,7 +6,6 @@ import edu.cnp.parts.CnpParts;
 import edu.network.exception.ClientException;
 import edu.client.exception.RequestProcessFailureException;
 import edu.client.network.Client;
-import edu.pay.exception.general.processor.ProcessFailureException;
 import edu.utils.Logger;
 import edu.utils.PropertyProvider;
 import edu.utils.exception.PropertyProviderException;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class ClientController {
 
-    public static final int WIN_SIZE = 650;
+    public static final int WIN_SIZE = 700;
 
     private final ClientMainView view;
     private final ClientModel model;
@@ -50,7 +49,16 @@ public class ClientController {
 
         try {
             PropertyProvider.setClientProperty("config.file",
-                    StringUtils.replace(configPath, "\\", "\\\\") + "config.properties", true);
+                    StringUtils.replace(configPath, "\\", "\\\\") + "\\\\config.properties", false);
+        } catch (PropertyProviderException e) {
+            ClientMainView.showErrorMessage(e.getMessage());
+        }
+
+        PropertyProvider.reloadClientProperties();
+
+        try {
+            PropertyProvider.setClientProperty("config.file",
+                    StringUtils.replace(configPath, "\\", "\\\\") + "\\\\config.properties", true);
         } catch (PropertyProviderException e) {
             ClientMainView.showErrorMessage(e.getMessage());
         }
@@ -68,7 +76,7 @@ public class ClientController {
         PropertyProvider.setClientProperty("input.format", path, true);
     }
 
-    public void updateInputPath(JButton btn) {
+    public void updateInputPath(JButton btn, JMenuItem secondaryBtn) {
         File selected = view.showFileChooser();
         updateBtnLabel(btn, selected);
         model.setInput(selected);
@@ -78,7 +86,7 @@ public class ClientController {
         PropertyProvider.setClientProperty("output.format", path, true);
     }
 
-    public void updateOutputPath(JButton btn) {
+    public void updateOutputPath(JButton btn, JMenuItem secondaryBtn) {
         File selected = view.showFileChooser();
         updateBtnLabel(btn, selected);
         model.setOutput(selected);
@@ -213,6 +221,7 @@ public class ClientController {
                 try {
                     new Client(ClientController.this).requestProcess(input.getAbsolutePath(), output.getAbsolutePath());
                     ClientController.this.setCurrentView(view.getSecondaryView());
+                    view.toggleFileMenu();
                     return true;
                 } catch (ClientException e) {
                     ClientMainView.showErrorMessage(e.getMessage());

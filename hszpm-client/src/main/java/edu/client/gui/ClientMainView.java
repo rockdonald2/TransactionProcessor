@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -37,6 +38,8 @@ public class ClientMainView extends JFrame {
     private JComboBox<String> groupByList;
     private JButton createChartBtn;
 
+    private JMenu fileMenu;
+
     private ClientController controller;
 
     public ClientMainView(ClientController controller) {
@@ -50,6 +53,8 @@ public class ClientMainView extends JFrame {
 
         initMainPanel();
         initSecondaryPanel();
+
+        initMenuBar();
 
         // main view
         this.setContentPane(contentPanelMainView);
@@ -65,6 +70,53 @@ public class ClientMainView extends JFrame {
 
     public JPanel getSecondaryView() {
         return contentPanelSecondaryView;
+    }
+
+    private void initMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        fileMenu = new JMenu("File");
+        fileMenu.setFont(customFont.get("13"));
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+
+        JMenu aboutMenu = new JMenu("About");
+        aboutMenu.setFont(customFont.get("13"));
+        aboutMenu.setMnemonic(KeyEvent.VK_A);
+
+        JMenuItem about = new JMenuItem("About");
+        about.setFont(customFont.get("12"));
+        about.addActionListener(e -> JOptionPane.showMessageDialog(this, "asd"));
+
+        JMenuItem exit = new JMenuItem("Exit");
+        exit.setFont(customFont.get("12"));
+        exit.addActionListener(e -> System.exit(0));
+
+        JMenuItem inputFile = new JMenuItem("Select input file");
+        inputFile.setFont(customFont.get("12"));
+        try {
+            inputFile.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/input.png")))));
+        } catch (IOException | NullPointerException e) {
+            Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for input menubutton.");
+        }
+        inputFile.addActionListener(e -> controller.updateInputPath(btnInputFileChooser, inputFile));
+
+        JMenuItem outputFile = new JMenuItem("Select output file");
+        outputFile.setFont(customFont.get("12"));
+        try {
+            outputFile.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/output.png")))));
+        } catch (IOException | NullPointerException e) {
+            Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for output menubutton.");
+        }
+        outputFile.addActionListener(e -> controller.updateOutputPath(btnOutputFileChooser, outputFile));
+
+        fileMenu.add(inputFile);
+        fileMenu.add(outputFile);
+        aboutMenu.add(about);
+        aboutMenu.add(exit);
+
+        menuBar.add(fileMenu);
+        menuBar.add(aboutMenu);
+
+        this.setJMenuBar(menuBar);
     }
 
     private void initMainPanel() {
@@ -172,7 +224,7 @@ public class ClientMainView extends JFrame {
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for input button.");
         }
-        btnInputFileChooser.addActionListener(e -> controller.updateInputPath(btnInputFileChooser));
+        btnInputFileChooser.addActionListener(e -> controller.updateInputPath(btnInputFileChooser, null));
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -185,7 +237,7 @@ public class ClientMainView extends JFrame {
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for output button.");
         }
-        btnOutputFileChooser.addActionListener(e -> controller.updateOutputPath(btnOutputFileChooser));
+        btnOutputFileChooser.addActionListener(e -> controller.updateOutputPath(btnOutputFileChooser, null));
 
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -240,7 +292,10 @@ public class ClientMainView extends JFrame {
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for back button.");
         }
-        backBtn.addActionListener((e) -> controller.setCurrentView(contentPanelMainView));
+        backBtn.addActionListener((e) -> {
+            controller.setCurrentView(contentPanelMainView);
+            this.toggleFileMenu();
+        });
 
         backPanel.add(backBtn);
         UIUtils.fillWithBlankLabels(backPanel, 2);
@@ -343,4 +398,9 @@ public class ClientMainView extends JFrame {
     public void toggleProcessBtn() {
         this.processBtn.setEnabled(!this.processBtn.isEnabled());
     }
+
+    public void toggleFileMenu() {
+        this.fileMenu.setEnabled(!this.fileMenu.isEnabled());
+    }
+
 }
