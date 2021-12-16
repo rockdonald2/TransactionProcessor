@@ -32,15 +32,11 @@ public class ClientMainView extends JFrame {
     private JButton processBtn; // feldolgozást elindító gomb
 
     private JPanel contentPanelSecondaryView;
-    private JButton backBtn;
-    private JButton metricesBtn;
-    private JButton statisticsBtn;
     private JComboBox<String> groupByList;
-    private JButton createChartBtn;
 
     private JMenu fileMenu;
 
-    private ClientController controller;
+    private final ClientController controller;
 
     public ClientMainView(ClientController controller) {
         this.controller = controller;
@@ -84,7 +80,7 @@ public class ClientMainView extends JFrame {
 
         JMenuItem about = new JMenuItem("About");
         about.setFont(customFont.get("12"));
-        about.addActionListener(e -> JOptionPane.showMessageDialog(this, "asd"));
+        about.addActionListener(e -> JOptionPane.showMessageDialog(this, "Created by Lukacs Zsolt in 2021 - Simple server-client based transaction processor which makes use of my CNP validator."));
 
         JMenuItem exit = new JMenuItem("Exit");
         exit.setFont(customFont.get("12"));
@@ -285,7 +281,7 @@ public class ClientMainView extends JFrame {
 
     private void initBackPanel() {
         JPanel backPanel = new JPanel(new GridLayout(2, 3));
-        backBtn = new JButton("Back");
+        JButton backBtn = new JButton("Back");
         backBtn.setFont(customFont.get("14"));
         try {
             backBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/left-arrow.png")))));
@@ -304,7 +300,7 @@ public class ClientMainView extends JFrame {
     }
 
     private void initShowMetrices() {
-        metricesBtn = new JButton("Show metrices");
+        JButton metricesBtn = new JButton("Show metrices");
         metricesBtn.setFont(customFont.get("14"));
         try {
             metricesBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/table.png")))));
@@ -317,7 +313,7 @@ public class ClientMainView extends JFrame {
     }
 
     private void initShowStatistics() {
-        statisticsBtn = new JButton("Show customers' statistics");
+        JButton statisticsBtn = new JButton("Show customers' statistics");
         statisticsBtn.setFont(customFont.get("14"));
         try {
             statisticsBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/table.png")))));
@@ -342,7 +338,7 @@ public class ClientMainView extends JFrame {
 
         chartPanel.add(chartControls);
 
-        createChartBtn = new JButton("Create chart");
+        JButton createChartBtn = new JButton("Create chart");
         try {
             createChartBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/chart.png")))));
         } catch (IOException | NullPointerException e) {

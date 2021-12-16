@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,12 +31,12 @@ public class ClientModel {
     this.output = output;
   }
 
-  public void setCustomers(Map<CnpParts, List<BigDecimal>> mapOfCustomers) {
-    this.customers = mapOfCustomers;
-  }
-
   public Map<CnpParts, List<BigDecimal>> getCustomers() {
     return customers;
+  }
+
+  public void setCustomers(Map<CnpParts, List<BigDecimal>> mapOfCustomers) {
+    this.customers = mapOfCustomers;
   }
 
   public JSONObject getMetrices() {
