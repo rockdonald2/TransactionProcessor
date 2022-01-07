@@ -2,7 +2,7 @@ package edu.client.gui;
 
 import edu.client.exception.RequestProcessFailureException;
 import edu.client.gui.utils.UIUtils;
-import edu.utils.ConfigProvider;
+import edu.client.utils.ConfigProvider;
 import edu.cnp.parts.CnpParts;
 import edu.utils.Logger;
 

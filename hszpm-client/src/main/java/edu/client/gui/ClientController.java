@@ -2,7 +2,7 @@ package edu.client.gui;
 
 import edu.client.exception.LayerException;
 import edu.client.gui.utils.LoaderPanel;
-import edu.utils.ConfigProvider;
+import edu.client.utils.ConfigProvider;
 import edu.cnp.parts.CnpParts;
 import edu.network.exception.ClientException;
 import edu.client.exception.RequestProcessFailureException;

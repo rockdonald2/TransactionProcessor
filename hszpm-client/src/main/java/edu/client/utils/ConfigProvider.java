@@ -1,5 +1,6 @@
-package edu.utils;
+package edu.client.utils;
 
+import edu.utils.Logger;
 import edu.utils.exception.PropertyProviderException;
 
 import java.io.*;

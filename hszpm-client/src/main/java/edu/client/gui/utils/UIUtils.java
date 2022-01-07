@@ -1,6 +1,6 @@
 package edu.client.gui.utils;
 
-import edu.utils.ConfigProvider;
+import edu.client.utils.ConfigProvider;
 import edu.utils.Logger;
 
 import javax.swing.*;
