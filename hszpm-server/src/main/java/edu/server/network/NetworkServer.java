@@ -32,7 +32,7 @@ public class NetworkServer implements Server {
 		_on = true;
 
 		try {
-			var ss = new ServerSocket((Integer.parseInt(PropertyProvider.getServerProperty("port"))));
+			var ss = new ServerSocket((Integer.parseInt(PropertyProvider.getProperty("port"))));
 
 			while (_on) {
 				handlePool.handleClient(ss.accept());

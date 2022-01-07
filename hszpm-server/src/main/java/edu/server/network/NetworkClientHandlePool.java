@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class NetworkClientHandlePool {
 
   private static NetworkClientHandlePool instance;
-  private static final int POOL_SIZE = Integer.parseInt(PropertyProvider.getServerProperty("pool.size"));
+  private static final int POOL_SIZE = Integer.parseInt(PropertyProvider.getProperty("pool.size"));
   private final AtomicInteger current;
 
   private NetworkClientHandlePool() {

@@ -20,8 +20,8 @@ import edu.pay.processor.dataloader.DataLoaderFactory;
 import edu.pay.processor.utils.ProcessorUtils;
 import edu.pay.utils.PayUtils;
 import edu.cnp.parts.CnpParts;
+import edu.utils.ConfigProvider;
 import edu.utils.Logger;
-import edu.utils.PropertyProvider;
 import org.jetbrains.annotations.NotNull;
 
 class SimplePayProcessorImpl implements PayProcessor {
@@ -32,7 +32,7 @@ class SimplePayProcessorImpl implements PayProcessor {
 	@Override
 	public Map<CnpParts, ArrayList<BigDecimal>> process(@NotNull InputStream paymentsInputStream, @NotNull ObjectOutputStream metricsOutputStream) throws ProcessFailureException {
 		DataLoaderFactory loaderFactory = new DataLoaderFactory();
-		DataLoader loader = loaderFactory.getLoader(PropertyProvider.getClientProperty("input.format"));
+		DataLoader loader = loaderFactory.getLoader(ConfigProvider.getProperty("input.format"));
 		var dataInput = loader.loadData(paymentsInputStream);
 		var mapOfCustomers = ProcessorUtils.getCustomers(dataInput, errors);
 
@@ -66,7 +66,7 @@ class SimplePayProcessorImpl implements PayProcessor {
 			}
 
 			MetricsOutputFactory outputFactory = new MetricsOutputFactory();
-			outputFactory.getWriter(PropertyProvider.getClientProperty("output.format")).writeToFile(metrics, metricsOutputStream);
+			outputFactory.getWriter(ConfigProvider.getProperty("output.format")).writeToFile(metrics, metricsOutputStream);
 		} catch (MetricsException | MetricsOutputException | UnsupportedMetricsTypeException | UnsupportedOutputException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 			throw new ProcessFailureException(e.getMessage());

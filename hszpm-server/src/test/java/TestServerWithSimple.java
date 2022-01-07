@@ -1,8 +1,7 @@
 import edu.cnp.parts.CnpParts;
 import edu.network.FileTransfer;
-import edu.server.Server;
-import edu.server.ServerFactory;
 import edu.server.network.NetworkClientHandle;
+import edu.utils.ConfigProvider;
 import edu.utils.PropertyProvider;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
@@ -29,8 +28,8 @@ public class TestServerWithSimple {
 
 	@BeforeClass
 	public static void startServer() throws IOException, InterruptedException, ClassNotFoundException {
-		server = new ServerSocket(Integer.parseInt(PropertyProvider.getServerProperty("port")));
-		Socket s = new Socket("localhost", Integer.parseInt(PropertyProvider.getServerProperty("port")));
+		server = new ServerSocket(Integer.parseInt(PropertyProvider.getProperty("port")));
+		Socket s = new Socket("localhost", Integer.parseInt(PropertyProvider.getProperty("port")));
 
 		final ExecutorService exService = Executors.newSingleThreadExecutor();
 		exService.execute(() -> {
@@ -42,9 +41,9 @@ public class TestServerWithSimple {
 		});
 
 		ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-		PropertyProvider.setClientProperty("processor.type", "simple", false);
-		PropertyProvider.setClientProperty("input.format", "csv", false);
-		PropertyProvider.setClientProperty("output.format", "json", false);
+		ConfigProvider.setProperty("processor.type", "simple", false);
+		ConfigProvider.setProperty("input.format", "csv", false);
+		ConfigProvider.setProperty("output.format", "json", false);
 		File input = new File(TestServerWithSimple.class.getResource("testData.csv").getPath());
 		out.writeObject(new FileTransfer(Files.readAllBytes(Path.of(input.getPath()))));
 		out.flush();

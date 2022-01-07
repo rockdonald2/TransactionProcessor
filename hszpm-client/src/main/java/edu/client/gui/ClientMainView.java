@@ -2,9 +2,9 @@ package edu.client.gui;
 
 import edu.client.exception.RequestProcessFailureException;
 import edu.client.gui.utils.UIUtils;
+import edu.utils.ConfigProvider;
 import edu.cnp.parts.CnpParts;
 import edu.utils.Logger;
-import edu.utils.PropertyProvider;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -86,7 +86,7 @@ public class ClientMainView extends JFrame {
         exit.setFont(customFont.get("12"));
         exit.addActionListener(e -> System.exit(0));
 
-        JMenuItem inputFile = new JMenuItem("Select input file");
+        JMenuItem inputFile = new JMenuItem("Select file");
         inputFile.setFont(customFont.get("12"));
         try {
             inputFile.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/input.png")))));
@@ -95,7 +95,7 @@ public class ClientMainView extends JFrame {
         }
         inputFile.addActionListener(e -> controller.updateInputPath(btnInputFileChooser, inputFile));
 
-        JMenuItem outputFile = new JMenuItem("Select output file");
+        JMenuItem outputFile = new JMenuItem("Select file");
         outputFile.setFont(customFont.get("12"));
         try {
             outputFile.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/output.png")))));
@@ -146,7 +146,7 @@ public class ClientMainView extends JFrame {
         JLabel inputLabel = new JLabel("Input file format");
         inputLabel.setFont(customFont.get("14"));
         inputFormatsList = new JComboBox<>(new String[]{"csv"});
-        inputFormatsList.setSelectedItem(PropertyProvider.getClientProperty("input.format"));
+        inputFormatsList.setSelectedItem(ConfigProvider.getProperty("input.format"));
         inputFormatsList.setFont(customFont.get("13"));
         inputFormatsList.addItemListener(e -> controller.updateInputFormat(String.valueOf(inputFormatsList.getSelectedItem())));
 
@@ -165,7 +165,7 @@ public class ClientMainView extends JFrame {
         JLabel outputLabel = new JLabel("Output file format");
         outputLabel.setFont(customFont.get("14"));
         outputFormatsList = new JComboBox<>(new String[]{"json"});
-        outputFormatsList.setSelectedItem(PropertyProvider.getClientProperty("output.format"));
+        outputFormatsList.setSelectedItem(ConfigProvider.getProperty("output.format"));
         outputFormatsList.setFont(customFont.get("13"));
         outputFormatsList.addItemListener(e -> controller.updateOutputFormat(String.valueOf(outputFormatsList.getSelectedItem())));
 
@@ -185,7 +185,7 @@ public class ClientMainView extends JFrame {
         typesLabel.setFont(customFont.get("14"));
         metricsTypesList = new JComboBox<>(new String[]{"simple"});
         metricsTypesList.setFont(customFont.get("13"));
-        metricsTypesList.setSelectedItem(PropertyProvider.getClientProperty("processor.type"));
+        metricsTypesList.setSelectedItem(ConfigProvider.getProperty("processor.type"));
         metricsTypesList.addItemListener(e -> controller.updateMetricsType(String.valueOf(metricsTypesList.getSelectedItem())));
 
         gbc.gridx = 0;

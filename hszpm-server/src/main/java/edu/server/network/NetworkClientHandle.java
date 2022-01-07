@@ -8,8 +8,8 @@ import edu.server.exception.SocketFailureException;
 import edu.pay.exception.general.GeneralException;
 import edu.pay.processor.PayProcessor;
 import edu.pay.processor.PayProcessorFactory;
+import edu.utils.ConfigProvider;
 import edu.utils.Logger;
-import edu.utils.PropertyProvider;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -60,7 +60,7 @@ public class NetworkClientHandle extends Thread implements ClientHandle {
       Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers = null;
       try {
         PayProcessorFactory factory = new PayProcessorFactory();
-        PayProcessor processor = new PayProcessorFactory().getProcessor(PropertyProvider.getClientProperty("processor.type"));
+        PayProcessor processor = new PayProcessorFactory().getProcessor(ConfigProvider.getProperty("processor.type"));
         mapOfCustomers = processor.process(paymentsInputStream, out);
       } catch (GeneralException e) {
         Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while processing payments");

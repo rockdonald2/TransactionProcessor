@@ -2,12 +2,12 @@ package edu.client.gui;
 
 import edu.client.exception.LayerException;
 import edu.client.gui.utils.LoaderPanel;
+import edu.utils.ConfigProvider;
 import edu.cnp.parts.CnpParts;
 import edu.network.exception.ClientException;
 import edu.client.exception.RequestProcessFailureException;
 import edu.client.network.Client;
 import edu.utils.Logger;
-import edu.utils.PropertyProvider;
 import edu.utils.exception.PropertyProviderException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
@@ -37,30 +37,10 @@ public class ClientController {
     }
 
     private void checkConfigSetup() {
-        JOptionPane.showMessageDialog(null, "Select a directory for saving configuration.");
-        var configPath = PropertyProvider.getClientProperty("config.file");
-
-        while (configPath == null || "".equals(configPath)) {
-            var tmp = view.showDirectoryChooser();
-            if (tmp != null) {
-                configPath = tmp.getAbsolutePath();
-            }
-        }
-
         try {
-            PropertyProvider.setClientProperty("config.file",
-                    StringUtils.replace(configPath, "\\", "\\\\") + "\\\\config.properties", false);
-        } catch (PropertyProviderException e) {
-            ClientMainView.showErrorMessage(e.getMessage());
-        }
-
-        PropertyProvider.reloadClientProperties();
-
-        try {
-            PropertyProvider.setClientProperty("config.file",
-                    StringUtils.replace(configPath, "\\", "\\\\") + "\\\\config.properties", true);
-        } catch (PropertyProviderException e) {
-            ClientMainView.showErrorMessage(e.getMessage());
+            ConfigProvider.getProperty("connection.port");
+        } catch (PropertyProviderException ignored) {
+            ClientMainView.showErrorMessage("Failed to load application configuration, reverting back to default.");
         }
     }
 
@@ -68,12 +48,12 @@ public class ClientController {
         if (selected != null && selected.exists()) {
             view.updateBtnLabel(btn, String.format("Selected %s", selected.getName()));
         } else {
-            view.updateBtnLabel(btn, "Select input file");
+            view.updateBtnLabel(btn, "Select file");
         }
     }
 
     public void updateInputFormat(String path) {
-        PropertyProvider.setClientProperty("input.format", path, true);
+        ConfigProvider.setProperty("input.format", path, true);
     }
 
     public void updateInputPath(JButton btn, JMenuItem secondaryBtn) {
@@ -83,7 +63,7 @@ public class ClientController {
     }
 
     public void updateOutputFormat(String path) {
-        PropertyProvider.setClientProperty("output.format", path, true);
+        ConfigProvider.setProperty("output.format", path, true);
     }
 
     public void updateOutputPath(JButton btn, JMenuItem secondaryBtn) {
@@ -93,7 +73,7 @@ public class ClientController {
     }
 
     public void updateMetricsType(String type) {
-        PropertyProvider.setClientProperty("processor.type", type, true);
+        ConfigProvider.setProperty("processor.type", type, true);
     }
 
     public void setCurrentView(JPanel newView) {

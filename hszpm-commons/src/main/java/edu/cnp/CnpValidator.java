@@ -47,7 +47,9 @@ public final class CnpValidator {
   private CnpValidator() {}
 
   // ! Nem szükséges a szinkronizáltság, thread-local változók jelennek csak meg
-  public static CnpParts validate(final String cnp) throws CnpException {
+  public static CnpParts validate(String cnp) throws CnpException {
+    cnp = cnp.trim();
+
     validateLength(cnp);
     validateFormat(cnp);
     var sex = getSex(cnp);

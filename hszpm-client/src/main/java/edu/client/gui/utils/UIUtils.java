@@ -1,5 +1,6 @@
 package edu.client.gui.utils;
 
+import edu.utils.ConfigProvider;
 import edu.utils.Logger;
 
 import javax.swing.*;
@@ -14,11 +15,11 @@ public final class UIUtils {
 
     public static void initLookAndFeel() {
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            if ("Nimbus".equals(info.getName())) {
+            if (info.getName().equals(ConfigProvider.getProperty("look.and.feel"))) {
                 try {
                     UIManager.setLookAndFeel(info.getClassName());
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-                    Logger.getLogger().logMessage(Logger.LogLevel.CRITICAL, "Failed to initialize look and feel.");
+                    Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to initialize look and feel.");
                 }
                 break;
             }
@@ -33,15 +34,14 @@ public final class UIUtils {
             Font customFont;
 
             for (float i = 10; i <= 24; ++i) {
-                customFont = Font.createFont(Font.TRUETYPE_FONT, new File(UIUtils.class.getResource("/fonts/openSans.ttf").getPath())).deriveFont(i);
+                customFont = Font.createFont(Font.TRUETYPE_FONT, new File(UIUtils.class.getResource(String.format("/fonts/%s.ttf", ConfigProvider.getProperty("font"))).getPath())).deriveFont(i);
                 ge.registerFont(customFont);
                 fonts.put(String.valueOf((int) i), customFont);
             }
 
             return fonts;
-        } catch (IOException | FontFormatException e) {
-            System.err.println(e.getMessage());
-            // TODO: exception
+        } catch (IOException | FontFormatException | NullPointerException e) {
+            Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to load fonts. " + e.getMessage());
         }
 
         return Collections.emptyMap();

@@ -1,11 +1,11 @@
 package edu.client.network;
 
+import edu.utils.ConfigProvider;
 import edu.cnp.parts.CnpParts;
 import edu.client.exception.LayerException;
 import edu.client.gui.ClientController;
 import edu.network.FileTransfer;
 import edu.utils.Logger;
-import edu.utils.PropertyProvider;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -13,8 +13,6 @@ import java.math.BigDecimal;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +41,7 @@ public class Client {
             }
 
             try {
-                s = new Socket("localhost", Integer.parseInt(PropertyProvider.getServerProperty("port")));
+                s = new Socket("localhost", Integer.parseInt(ConfigProvider.getProperty("connection.port")));
             } catch (IOException e) {
                 Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: error while creating socket");
                 throw new LayerException("Error while creating communication socket with server.");
@@ -64,7 +62,7 @@ public class Client {
                 throw new LayerException("Non-existing input file.");
             }
 
-            if (!input.getName().contains(PropertyProvider.getClientProperty("input.format"))) {
+            if (!input.getName().contains(ConfigProvider.getProperty("input.format"))) {
                 Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: incompatible type of input file with currently set input format.");
                 throw new LayerException("Incompatible type of input file with currently set input format.");
             }
@@ -79,7 +77,7 @@ public class Client {
                 throw new LayerException("Cannot write to output file.");
             }
 
-            if (!output.getName().contains(PropertyProvider.getClientProperty("output.format"))) {
+            if (!output.getName().contains(ConfigProvider.getProperty("output.format"))) {
                 Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: incompatible type of output file with currently set input format.");
                 throw new LayerException("Incompatible type of input file with currently set input format.");
             }

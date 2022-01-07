@@ -16,7 +16,7 @@ public class CnpTests {
 
 		@Test
 		public void case2() {
-			Assert.assertEquals("CL", CnpValidator.validate("6000722515408 ").county().getAbrv());
+			Assert.assertEquals("CL", CnpValidator.validate(" 6000722515408").county().getAbrv());
 		}
 
 		@Test

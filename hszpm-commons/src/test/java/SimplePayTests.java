@@ -4,8 +4,7 @@ import edu.pay.processor.PayProcessorFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.math.BigDecimal;
 
 public class SimplePayTests {
@@ -17,9 +16,10 @@ public class SimplePayTests {
 		PayProcessorFactory processorFactory = new PayProcessorFactory();
 		testProcessor = processorFactory.getProcessor("simple");
 		try {
-			testProcessor.process(new FileInputStream(SimplePayTests.class.getResource("/testData.csv").getPath()), null);
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + "\\test_output.json"));
+			testProcessor.process(new FileInputStream(SimplePayTests.class.getResource("/testData.csv").getPath()), out);
 			testMetrics = (SimplePayMetrics) testProcessor.getProcessedMetrics();
-		} catch (FileNotFoundException | NullPointerException ignored) {}
+		} catch (IOException | NullPointerException ignored) {}
 	}
 
 	public static class TestPaymentMinors {
