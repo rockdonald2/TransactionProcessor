@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class Client {
 
@@ -91,6 +92,11 @@ public class Client {
             }
 
             FileTransfer inFt = new FileTransfer(inputByteContent);
+            Properties config = new Properties();
+            config.setProperty("processor.type", ConfigProvider.getProperty("processor.type"));
+            config.setProperty("input.format", ConfigProvider.getProperty("input.format"));
+            config.setProperty("output.format", ConfigProvider.getProperty("output.format"));
+            inFt.setProperties(config);
             try {
                 out.writeObject(inFt);
                 out.flush();

@@ -8,7 +8,6 @@ import edu.server.exception.SocketFailureException;
 import edu.pay.exception.general.GeneralException;
 import edu.pay.processor.PayProcessor;
 import edu.pay.processor.PayProcessorFactory;
-import edu.utils.ConfigProvider;
 import edu.utils.Logger;
 
 import java.io.*;
@@ -16,6 +15,7 @@ import java.math.BigDecimal;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Properties;
 
 public class NetworkClientHandle extends Thread implements ClientHandle {
 
@@ -49,6 +49,8 @@ public class NetworkClientHandle extends Thread implements ClientHandle {
         throw new SocketFailureException("Error while recreating input data.");
       }
 
+      Properties config = inFt.getProperties();
+
       InputStream paymentsInputStream = new ByteArrayInputStream(inFt.getData());
       try {
         out = new ObjectOutputStream(client.getOutputStream());
@@ -60,8 +62,8 @@ public class NetworkClientHandle extends Thread implements ClientHandle {
       Map<CnpParts, ArrayList<BigDecimal>> mapOfCustomers = null;
       try {
         PayProcessorFactory factory = new PayProcessorFactory();
-        PayProcessor processor = new PayProcessorFactory().getProcessor(ConfigProvider.getProperty("processor.type"));
-        mapOfCustomers = processor.process(paymentsInputStream, out);
+        PayProcessor processor = new PayProcessorFactory().getProcessor(config.getProperty("processor.type"));
+        mapOfCustomers = processor.process(paymentsInputStream, config.getProperty("input.format"), out, config.getProperty("output.format"));
       } catch (GeneralException e) {
         Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while processing payments");
         Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());

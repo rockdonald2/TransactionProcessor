@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -41,11 +42,14 @@ public class TestServerWithSimple {
 		});
 
 		ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
-		ConfigProvider.setProperty("processor.type", "simple", false);
-		ConfigProvider.setProperty("input.format", "csv", false);
-		ConfigProvider.setProperty("output.format", "json", false);
+		Properties config = new Properties();
+		config.setProperty("processor.type", "simple");
+		config.setProperty("input.format", "csv");
+		config.setProperty("output.format", "json");
 		File input = new File(TestServerWithSimple.class.getResource("testData.csv").getPath());
-		out.writeObject(new FileTransfer(Files.readAllBytes(Path.of(input.getPath()))));
+		FileTransfer outFt = new FileTransfer(Files.readAllBytes(Path.of(input.getPath())));
+		outFt.setProperties(config);
+		out.writeObject(outFt);
 		out.flush();
 
 		File output = new File(TestServerWithSimple.class.getResource("testResult.json").getPath());

@@ -17,7 +17,7 @@ public class SimplePayTests {
 		testProcessor = processorFactory.getProcessor("simple");
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.dir") + "\\test_output.json"));
-			testProcessor.process(new FileInputStream(SimplePayTests.class.getResource("/testData.csv").getPath()), out);
+			testProcessor.process(new FileInputStream(SimplePayTests.class.getResource("/testData.csv").getPath()), "csv", out, "json");
 			testMetrics = (SimplePayMetrics) testProcessor.getProcessedMetrics();
 		} catch (IOException | NullPointerException ignored) {}
 	}

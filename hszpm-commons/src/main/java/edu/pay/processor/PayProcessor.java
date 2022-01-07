@@ -22,7 +22,7 @@ public interface PayProcessor {
      * @throws IOException
      *             ha valamilyen I/O hiba jelenne meg
      */
-    Map<CnpParts, ArrayList<BigDecimal>> process(@NotNull InputStream paymentsInputStream, @NotNull ObjectOutputStream metricsOutputStream);
+    Map<CnpParts, ArrayList<BigDecimal>> process(@NotNull InputStream paymentsInputStream, @NotNull String inputFormat, @NotNull ObjectOutputStream metricsOutputStream, @NotNull String outputFormat);
 
     PayMetrics getProcessedMetrics();
 
