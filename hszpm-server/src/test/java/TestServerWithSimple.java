@@ -1,7 +1,7 @@
 import edu.cnp.parts.CnpParts;
 import edu.network.FileTransfer;
 import edu.server.network.NetworkClientHandle;
-import edu.utils.PropertyProvider;
+import edu.server.utils.PropertyProvider;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;

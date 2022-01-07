@@ -1,6 +1,6 @@
 package edu.server;
 
-import edu.utils.PropertyProvider;
+import edu.server.utils.PropertyProvider;
 
 public class Main {
   public static void main(String[] args) {

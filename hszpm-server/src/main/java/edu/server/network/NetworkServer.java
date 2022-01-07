@@ -3,7 +3,7 @@ package edu.server.network;
 import edu.server.Server;
 import edu.server.exception.SocketFailureException;
 import edu.utils.Logger;
-import edu.utils.PropertyProvider;
+import edu.server.utils.PropertyProvider;
 
 import java.io.IOException;
 import java.net.ServerSocket;

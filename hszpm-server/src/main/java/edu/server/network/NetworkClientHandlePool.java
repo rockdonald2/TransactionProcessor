@@ -2,7 +2,7 @@ package edu.server.network;
 
 import edu.server.exception.SocketFailureException;
 import edu.utils.Logger;
-import edu.utils.PropertyProvider;
+import edu.server.utils.PropertyProvider;
 
 import java.net.Socket;
 import java.util.concurrent.atomic.AtomicInteger;

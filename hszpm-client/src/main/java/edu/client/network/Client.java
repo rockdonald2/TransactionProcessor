@@ -6,7 +6,6 @@ import edu.client.exception.LayerException;
 import edu.client.gui.ClientController;
 import edu.network.FileTransfer;
 import edu.utils.Logger;
-import edu.utils.PropertyProvider;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -43,7 +42,7 @@ public class Client {
             }
 
             try {
-                s = new Socket("localhost", Integer.parseInt(PropertyProvider.getProperty("port")));
+                s = new Socket("localhost", Integer.parseInt(ConfigProvider.getProperty("connection.port")));
             } catch (IOException e) {
                 Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: error while creating socket");
                 throw new LayerException("Error while creating communication socket with server.");

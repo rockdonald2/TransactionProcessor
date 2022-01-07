@@ -3,12 +3,12 @@ package edu.client.gui;
 import edu.client.exception.LayerException;
 import edu.client.gui.utils.LoaderPanel;
 import edu.client.utils.ConfigProvider;
+import edu.client.utils.exception.ConfigProviderException;
 import edu.cnp.parts.CnpParts;
 import edu.network.exception.ClientException;
 import edu.client.exception.RequestProcessFailureException;
 import edu.client.network.Client;
 import edu.utils.Logger;
-import edu.utils.exception.PropertyProviderException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
 import org.jfree.chart.ChartFactory;
@@ -32,14 +32,14 @@ public class ClientController {
 
     public ClientController() {
         this.model = new ClientModel();
+        loadConfig();
         this.view = new ClientMainView(this);
-        checkConfigSetup();
     }
 
-    private void checkConfigSetup() {
+    private void loadConfig() {
         try {
-            ConfigProvider.getProperty("connection.port");
-        } catch (PropertyProviderException ignored) {
+            ConfigProvider.load();
+        } catch (ConfigProviderException ignored) {
             ClientMainView.showErrorMessage("Failed to load application configuration, reverting back to default.");
         }
     }

@@ -1,18 +1,17 @@
 package edu.client.utils;
 
+import edu.client.utils.exception.ConfigProviderException;
 import edu.utils.Logger;
-import edu.utils.exception.PropertyProviderException;
 
 import java.io.*;
 import java.util.Properties;
 
 public class ConfigProvider {
 
-    private static final Properties properties;
-
+    private static Properties properties;
     private static final String CONFIG_PATH = System.getProperty("user.dir") + "\\config.properties";
 
-    static {
+    public static synchronized void load() {
         properties = new Properties();
 
         try (InputStream is = ConfigProvider.class.getResourceAsStream("/default_config.properties")) {
@@ -25,6 +24,7 @@ public class ConfigProvider {
                 } else {
                     configFile.createNewFile();
                     properties.store(new FileOutputStream(configFile), null);
+                    throw new ConfigProviderException("Failed to access config resource.");
                 }
             } else {
                 Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Stream of config resource is null.");
@@ -32,7 +32,6 @@ public class ConfigProvider {
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to access config resource.");
             Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
-            throw new PropertyProviderException();
         }
     }
 
@@ -40,7 +39,7 @@ public class ConfigProvider {
         return properties.getProperty(key);
     }
 
-    public static synchronized void setProperty(String key, String value, boolean save) throws PropertyProviderException {
+    public static synchronized void setProperty(String key, String value, boolean save) throws ConfigProviderException {
         properties.setProperty(key, value);
 
         if (save) {
@@ -49,7 +48,7 @@ public class ConfigProvider {
             } catch (IOException e) {
                 Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to write config resource.");
                 Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
-                throw new PropertyProviderException();
+                throw new ConfigProviderException("Failed to write config resource.");
             }
         }
     }
