@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 public class NetworkClientHandle extends Thread implements ClientHandle {
@@ -50,6 +51,10 @@ public class NetworkClientHandle extends Thread implements ClientHandle {
       }
 
       Properties config = inFt.getProperties();
+
+      if (Objects.isNull(config)) {
+        throw new SocketFailureException("Error because of missing config.");
+      }
 
       InputStream paymentsInputStream = new ByteArrayInputStream(inFt.getData());
       try {
