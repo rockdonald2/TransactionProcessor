@@ -1,7 +1,10 @@
 package edu.client.gui.utils;
 
+import edu.utils.Logger;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.Map;
 
 public class LoaderPanel extends JFrame {
@@ -14,7 +17,12 @@ public class LoaderPanel extends JFrame {
     JPanel panel = new JPanel(new BorderLayout());
     JLabel label = new JLabel(msg, SwingConstants.CENTER);
     label.setFont(customFont.get("12"));
-    ImageIcon image = new ImageIcon(LoaderPanel.class.getResource("/imgs/loader.gif").getPath());
+    ImageIcon image = null;
+    try {
+      image = new ImageIcon(LoaderPanel.class.getResourceAsStream("/imgs/loader.gif").readAllBytes());
+    } catch (IOException | NullPointerException e) {
+      Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to load loader gif.");
+    }
 
     label.setIcon(image);
     panel.add(label, BorderLayout.CENTER);

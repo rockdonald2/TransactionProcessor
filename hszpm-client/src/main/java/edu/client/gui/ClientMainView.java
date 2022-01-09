@@ -89,7 +89,7 @@ public class ClientMainView extends JFrame {
         JMenuItem inputFile = new JMenuItem("Select file");
         inputFile.setFont(customFont.get("12"));
         try {
-            inputFile.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/input.png")))));
+            inputFile.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/imgs/input.png")))));
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for input menubutton.");
         }
@@ -98,7 +98,7 @@ public class ClientMainView extends JFrame {
         JMenuItem outputFile = new JMenuItem("Select file");
         outputFile.setFont(customFont.get("12"));
         try {
-            outputFile.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/output.png")))));
+            outputFile.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/imgs/output.png")))));
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for output menubutton.");
         }
@@ -216,7 +216,7 @@ public class ClientMainView extends JFrame {
         btnInputFileChooser = new JButton("Select input file");
         btnInputFileChooser.setFont(customFont.get("13"));
         try {
-            btnInputFileChooser.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/input.png")))));
+            btnInputFileChooser.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/imgs/input.png")))));
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for input button.");
         }
@@ -229,7 +229,7 @@ public class ClientMainView extends JFrame {
         btnOutputFileChooser = new JButton("Select output file");
         btnOutputFileChooser.setFont(customFont.get("13"));
         try {
-            btnOutputFileChooser.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/output.png")))));
+            btnOutputFileChooser.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/imgs/output.png")))));
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for output button.");
         }
@@ -246,7 +246,7 @@ public class ClientMainView extends JFrame {
         processBtn = new JButton("Process transactions");
         processBtn.setFont(customFont.get("18"));
         try {
-            processBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/process.png")))));
+            processBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/imgs/process.png")))));
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for process request button.");
         }
@@ -284,7 +284,7 @@ public class ClientMainView extends JFrame {
         JButton backBtn = new JButton("Back");
         backBtn.setFont(customFont.get("14"));
         try {
-            backBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/left-arrow.png")))));
+            backBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/imgs/left-arrow.png")))));
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for back button.");
         }
@@ -303,7 +303,7 @@ public class ClientMainView extends JFrame {
         JButton metricesBtn = new JButton("Show metrices");
         metricesBtn.setFont(customFont.get("14"));
         try {
-            metricesBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/table.png")))));
+            metricesBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/imgs/table.png")))));
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for show metrices button.");
         }
@@ -316,7 +316,7 @@ public class ClientMainView extends JFrame {
         JButton statisticsBtn = new JButton("Show customers' statistics");
         statisticsBtn.setFont(customFont.get("14"));
         try {
-            statisticsBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/table.png")))));
+            statisticsBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/imgs/table.png")))));
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for show statistics button.");
         }
@@ -340,13 +340,13 @@ public class ClientMainView extends JFrame {
 
         JButton createChartBtn = new JButton("Create chart");
         try {
-            createChartBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResource("/imgs/chart.png")))));
+            createChartBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/imgs/chart.png")))));
         } catch (IOException | NullPointerException e) {
             Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for create chart button.");
         }
         createChartBtn.setFont(customFont.get("14"));
         chartPanel.add(createChartBtn);
-        createChartBtn.addActionListener((e) -> controller.createChartOf(groupByList.getSelectedItem().toString()));
+        createChartBtn.addActionListener((e) -> controller.createChartOf(Objects.requireNonNull(groupByList.getSelectedItem()).toString()));
 
         contentPanelSecondaryView.add(chartPanel);
     }
