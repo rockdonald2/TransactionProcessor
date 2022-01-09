@@ -34,7 +34,7 @@ public final class UIUtils {
             Font customFont;
 
             for (float i = 10; i <= 24; ++i) {
-                customFont = Font.createFont(Font.TRUETYPE_FONT, new File(UIUtils.class.getResource(String.format("/fonts/%s.ttf", ConfigProvider.getProperty("font"))).getPath())).deriveFont(i);
+                customFont = Font.createFont(Font.TRUETYPE_FONT, UIUtils.class.getResourceAsStream(String.format("/fonts/%s.ttf", ConfigProvider.getProperty("font")))).deriveFont(i);
                 ge.registerFont(customFont);
                 fonts.put(String.valueOf((int) i), customFont);
             }

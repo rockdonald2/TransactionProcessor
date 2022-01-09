@@ -87,6 +87,8 @@ public class NetworkClientHandle extends Thread implements ClientHandle {
         Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Server error: error while serializing map of customers.");
         throw new SocketFailureException("Error while serializing map of customers.");
       }
+
+      Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Successfully processed client service.");
     } catch (ServerException e) {
       Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
       try {
