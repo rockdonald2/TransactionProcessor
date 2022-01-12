@@ -33,6 +33,7 @@ public class ClientMainView extends JFrame {
 
     private JPanel contentPanelSecondaryView;
     private JComboBox<String> groupByList;
+    private JComboBox<String> customerCnpsList;
 
     private JMenu fileMenu;
 
@@ -270,12 +271,13 @@ public class ClientMainView extends JFrame {
 
     private void initSecondaryPanel() {
         contentPanelSecondaryView = new JPanel();
-        contentPanelSecondaryView.setLayout(new GridLayout(4, 1));
+        contentPanelSecondaryView.setLayout(new GridLayout(5, 1));
         contentPanelSecondaryView.setPreferredSize(new Dimension(ClientController.WIN_SIZE, ClientController.WIN_SIZE));
 
         initBackPanel();
         initShowMetrices();
         initShowStatistics();
+        initShowTransactions();
         initCreateChart();
     }
 
@@ -323,6 +325,45 @@ public class ClientMainView extends JFrame {
         statisticsBtn.addActionListener((e) -> controller.createTableOf("statistics"));
 
         contentPanelSecondaryView.add(statisticsBtn);
+    }
+
+    private void initShowTransactions() {
+        JPanel transPanel = new JPanel(new GridLayout(1, 2));
+        JPanel transControls = new JPanel(new GridLayout(3, 1));
+        JLabel customerLabel = new JLabel("Customers:");
+        customerLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        customerLabel.setFont(customFont.get("14"));
+        transControls.add(customerLabel);
+        customerCnpsList = new JComboBox<>(controller.getCustomerCnps());
+        transControls.add(customerCnpsList);
+        UIUtils.fillWithBlankLabels(transControls, 1);
+
+        transPanel.add(transControls);
+
+        JButton transactionsBtn = new JButton("Show transactions of customer");
+        transactionsBtn.setFont(customFont.get("14"));
+        try {
+            transactionsBtn.setIcon(new ImageIcon(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/imgs/table.png")))));
+        } catch (IOException | NullPointerException e) {
+            Logger.getLogger().logMessage(Logger.LogLevel.INFO, "Failed to set icon for show transactions button.");
+        }
+        transPanel.add(transactionsBtn);
+        transactionsBtn.addActionListener((e) -> controller.createTableOf("transactions"));
+
+        contentPanelSecondaryView.add(transPanel);
+    }
+
+    public void refreshCustomerCnpList() {
+        customerCnpsList.removeAllItems();
+
+        for (var elem : controller.getCustomerCnps()) {
+            customerCnpsList.addItem(elem);
+        }
+    }
+
+    public String getCurrentlySelectedCnp() {
+        if (customerCnpsList.getSelectedItem() != null) return (String) customerCnpsList.getSelectedItem();
+        return null;
     }
 
     private void initCreateChart() {

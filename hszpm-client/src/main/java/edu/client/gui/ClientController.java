@@ -92,6 +92,14 @@ public class ClientController {
         model.setMetrices(metrices);
     }
 
+    public String[] getCustomerCnps() {
+        var customers = model.getCustomers();
+
+        if (customers != null) return customers.keySet().stream().map(CnpParts::cnp).toList().toArray(new String[] {});
+
+        return new String[] {};
+    }
+
     public void createTableOf(String of) {
         switch (of) {
             case "metrices" -> {
@@ -120,6 +128,26 @@ public class ClientController {
                 }
 
                 new ClientTableView(columns, data);
+            }
+            case "transactions" -> {
+                var cnp = view.getCurrentlySelectedCnp();
+                var customers = model.getCustomers();
+                var cnpParts = customers.keySet().stream().filter(elem -> elem.cnp().equals(cnp)).findFirst().orElse(null);
+
+                if (cnpParts != null) {
+                    var transactions = customers.get(cnpParts);
+
+                    String[] columns = {"Transactions"};
+                    String[][] data = new String[transactions.size()][];
+
+                    for (int i = 0; i < transactions.size(); ++i) {
+                        data[i] = new String[]{ transactions.get(i).toString() };
+                    }
+
+                    new ClientTableView(columns, data);
+                } else {
+                    ClientMainView.showErrorMessage("Unable to find transactions for this CNP.");
+                }
             }
             default -> throw new LayerException("Unknown table type.");
         }
@@ -200,7 +228,6 @@ public class ClientController {
             protected Boolean doInBackground() throws Exception {
                 try {
                     new Client(ClientController.this).requestProcess(input.getAbsolutePath(), output.getAbsolutePath());
-                    ClientController.this.setCurrentView(view.getSecondaryView());
                     view.toggleFileMenu();
                     return true;
                 } catch (ClientException e) {
@@ -212,7 +239,9 @@ public class ClientController {
 
             @Override
             protected void done() {
+                view.refreshCustomerCnpList();
                 LoaderPanel.getInstance().hideLoader();
+                SwingUtilities.invokeLater(() -> ClientController.this.setCurrentView(view.getSecondaryView()));
                 view.toggleProcessBtn();
             }
         };
@@ -222,5 +251,4 @@ public class ClientController {
     public static void main(String[] args) {
         new ClientController();
     }
-
 }
