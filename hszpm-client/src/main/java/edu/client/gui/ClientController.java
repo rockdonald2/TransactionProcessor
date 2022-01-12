@@ -33,6 +33,7 @@ public class ClientController {
     public ClientController() {
         this.model = new ClientModel();
         loadConfig();
+        LoaderPanel.getInstance(); // lazy load loaderPanel to avoid bugs
         this.view = new ClientMainView(this);
     }
 
@@ -40,7 +41,22 @@ public class ClientController {
         try {
             ConfigProvider.load();
         } catch (ConfigProviderException ignored) {
+            Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to load application configuration, reverting back to default.");
             ClientMainView.showErrorMessage("Failed to load application configuration, reverting back to default.");
+        }
+    }
+
+    public void saveConfig(List<String> props, List<String> newVals) {
+        try {
+            for (int i = 0; i < props.size(); ++i) {
+                ConfigProvider.setProperty(props.get(i), newVals.get(i), false);
+            }
+
+            ConfigProvider.save();
+            ClientMainView.showInformationMessage("Configuration successfully saved.");
+        } catch (ConfigProviderException ignored) {
+            Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to save configuration.");
+            ClientMainView.showErrorMessage("Failed to save configuration.");
         }
     }
 
@@ -79,13 +95,18 @@ public class ClientController {
     public void setCurrentView(JPanel newView) {
         SwingUtilities.invokeLater(() -> {
             view.setContentPane(newView);
-            view.repaint();
-            view.revalidate();
+            refresh();
         });
+    }
+
+    public void refresh() {
+        view.repaint();
+        view.revalidate();
     }
 
     public void setCustomers(Map<CnpParts, List<BigDecimal>> mapOfCustomers) {
         model.setCustomers(mapOfCustomers);
+        view.refreshCustomerCnpList(mapOfCustomers.keySet().stream().map(CnpParts::cnp).toList().toArray(new String[] {}));
     }
 
     public void setMetrices(JSONObject metrices) {
@@ -98,6 +119,14 @@ public class ClientController {
         if (customers != null) return customers.keySet().stream().map(CnpParts::cnp).toList().toArray(new String[] {});
 
         return new String[] {};
+    }
+
+    public void createConfigView() {
+        new ClientConfigView(this);
+    }
+
+    public void exitApplication() {
+        System.exit(0);
     }
 
     public void createTableOf(String of) {
@@ -226,22 +255,23 @@ public class ClientController {
         SwingWorker<Boolean, Object> longProcess = new SwingWorker<>() {
             @Override
             protected Boolean doInBackground() throws Exception {
+                boolean successful = false;
+
                 try {
                     new Client(ClientController.this).requestProcess(input.getAbsolutePath(), output.getAbsolutePath());
                     view.toggleFileMenu();
-                    return true;
+                    SwingUtilities.invokeLater(() -> ClientController.this.setCurrentView(view.getSecondaryView()));
+                    successful = true;
                 } catch (ClientException e) {
                     ClientMainView.showErrorMessage(e.getMessage());
                 }
 
-                return false;
+                return successful;
             }
 
             @Override
             protected void done() {
-                view.refreshCustomerCnpList();
                 LoaderPanel.getInstance().hideLoader();
-                SwingUtilities.invokeLater(() -> ClientController.this.setCurrentView(view.getSecondaryView()));
                 view.toggleProcessBtn();
             }
         };
@@ -251,4 +281,5 @@ public class ClientController {
     public static void main(String[] args) {
         new ClientController();
     }
+
 }

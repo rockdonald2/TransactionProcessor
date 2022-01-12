@@ -81,11 +81,15 @@ public class ClientMainView extends JFrame {
 
         JMenuItem about = new JMenuItem("About");
         about.setFont(customFont.get("12"));
-        about.addActionListener(e -> JOptionPane.showMessageDialog(this, "Created by Lukacs Zsolt in 2021 - Simple server-client based transaction processor which makes use of my CNP validator."));
+        about.addActionListener(e -> showInformationMessage("Created by Lukacs Zsolt in 2021 - Simple server-client based transaction processor which makes use of my CNP validator."));
+
+        JMenuItem config = new JMenuItem("Configuration");
+        config.setFont(customFont.get("12"));
+        config.addActionListener(e -> controller.createConfigView());
 
         JMenuItem exit = new JMenuItem("Exit");
         exit.setFont(customFont.get("12"));
-        exit.addActionListener(e -> System.exit(0));
+        exit.addActionListener(e -> controller.exitApplication());
 
         JMenuItem inputFile = new JMenuItem("Select file");
         inputFile.setFont(customFont.get("12"));
@@ -108,6 +112,7 @@ public class ClientMainView extends JFrame {
         fileMenu.add(inputFile);
         fileMenu.add(outputFile);
         aboutMenu.add(about);
+        aboutMenu.add(config);
         aboutMenu.add(exit);
 
         menuBar.add(fileMenu);
@@ -335,6 +340,7 @@ public class ClientMainView extends JFrame {
         customerLabel.setFont(customFont.get("14"));
         transControls.add(customerLabel);
         customerCnpsList = new JComboBox<>(controller.getCustomerCnps());
+        customerCnpsList.setFont(customFont.get("13"));
         transControls.add(customerCnpsList);
         UIUtils.fillWithBlankLabels(transControls, 1);
 
@@ -353,10 +359,10 @@ public class ClientMainView extends JFrame {
         contentPanelSecondaryView.add(transPanel);
     }
 
-    public void refreshCustomerCnpList() {
+    public void refreshCustomerCnpList(String[] cnps) {
         customerCnpsList.removeAllItems();
 
-        for (var elem : controller.getCustomerCnps()) {
+        for (var elem : cnps) {
             customerCnpsList.addItem(elem);
         }
     }
@@ -375,6 +381,7 @@ public class ClientMainView extends JFrame {
         chartControls.add(groupByLabel);
         groupByList = new JComboBox<>(CnpParts.getParts());
         chartControls.add(groupByList);
+        groupByList.setFont(customFont.get("13"));
         UIUtils.fillWithBlankLabels(chartControls, 1);
 
         chartPanel.add(chartControls);

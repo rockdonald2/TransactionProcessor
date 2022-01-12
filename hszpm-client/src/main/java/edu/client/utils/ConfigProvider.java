@@ -4,6 +4,7 @@ import edu.client.utils.exception.ConfigProviderException;
 import edu.utils.Logger;
 
 import java.io.*;
+import java.util.List;
 import java.util.Properties;
 
 public class ConfigProvider {
@@ -43,13 +44,21 @@ public class ConfigProvider {
         properties.setProperty(key, value);
 
         if (save) {
-            try (OutputStream out = new FileOutputStream(CONFIG_PATH, false)) {
-                properties.store(out, null);
-            } catch (IOException e) {
-                Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to write config resource.");
-                Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
-                throw new ConfigProviderException("Failed to write config resource.");
-            }
+            save();
+        }
+    }
+
+    public static synchronized List<String> getKeys() {
+        return properties.keySet().stream().map(elem -> (String) elem).toList();
+    }
+
+    public static synchronized void save() {
+        try (OutputStream out = new FileOutputStream(CONFIG_PATH, false)) {
+            properties.store(out, null);
+        } catch (IOException e) {
+            Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Failed to write config resource.");
+            Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
+            throw new ConfigProviderException("Failed to write config resource.");
         }
     }
 
