@@ -79,8 +79,8 @@ public class Client {
             }
 
             if (!output.getName().contains(ConfigProvider.getProperty("output.format"))) {
-                Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: incompatible type of output file with currently set input format.");
-                throw new LayerException("Incompatible type of input file with currently set input format.");
+                Logger.getLogger().logMessage(Logger.LogLevel.ERROR, "Client error: incompatible type of output file with currently set output format.");
+                throw new LayerException("Incompatible type of output file with currently set output format.");
             }
 
             byte[] inputByteContent = null;
@@ -88,7 +88,7 @@ public class Client {
                 inputByteContent = Files.readAllBytes(Path.of(input.getPath()));
             } catch (IOException e) {
                 Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
-                throw new LayerException("Error while opening input file.");
+                throw new LayerException("Error while reading input file.");
             }
 
             FileTransfer inFt = new FileTransfer(inputByteContent);
