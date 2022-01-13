@@ -65,7 +65,7 @@ class SimplePayProcessorImpl implements PayProcessor {
 			}
 
 			MetricsOutputFactory outputFactory = new MetricsOutputFactory();
-			outputFactory.getWriter(outputFormat).writeToFile(metrics, metricsOutputStream);
+			outputFactory.getWriter(outputFormat).writeToStream(metrics, metricsOutputStream);
 		} catch (MetricsException | MetricsOutputException | UnsupportedMetricsTypeException | UnsupportedOutputException e) {
 			Logger.getLogger().logMessage(Logger.LogLevel.ERROR, e.getMessage());
 			throw new ProcessFailureException(e.getMessage());

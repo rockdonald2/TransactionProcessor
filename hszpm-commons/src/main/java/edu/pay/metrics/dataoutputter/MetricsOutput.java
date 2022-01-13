@@ -8,6 +8,6 @@ import java.io.ObjectOutputStream;
 
 public interface MetricsOutput {
 
-	void writeToFile(PayMetrics metrics, @NotNull ObjectOutputStream os) throws MetricsOutputException;
+	void writeToStream(PayMetrics metrics, @NotNull ObjectOutputStream os) throws MetricsOutputException;
 
 }

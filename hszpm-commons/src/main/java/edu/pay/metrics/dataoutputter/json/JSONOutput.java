@@ -22,7 +22,7 @@ public class JSONOutput implements MetricsOutput {
    * @param os
    */
 	@Override
-	public void writeToFile(PayMetrics metrics, @NotNull ObjectOutputStream os) throws MetricsOutputException {
+	public void writeToStream(PayMetrics metrics, @NotNull ObjectOutputStream os) throws MetricsOutputException {
 		var output = new JSONObject();
 		var metrices = metrics.metrices();
 
