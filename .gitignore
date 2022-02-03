@@ -24,3 +24,5 @@ hszpm-server/config.properties
 # config file for clients
 hszpm-client/config.properties
 hszpm-commons/config.properties
+
+**/bin/
